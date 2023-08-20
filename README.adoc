@@ -1,10 +1,12 @@
 == Name
-This synth is controlled within the cli (for now)
+synth - a super simple synth created with the winMM API
 
 == Synopsis
 synth OSCILLATOR FREQUENCY AMPLITUDE
 
 == Description
+This synth is controlled within the cli (for now)
+
 OSCILLATOR is the choice of and oscillator you want, you can choose from "sine",
 "saw" and "square". FREQUENCY is the frequency of the oscillator and AMPILTUDE
 is the amplitude of the oscillator

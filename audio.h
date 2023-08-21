@@ -28,6 +28,7 @@ typedef struct _WavData {
     void (*initStream) (struct _WavData *wavdata);
     void (*handleStream) (int16_t *stream, struct _WavData *wavdata);
     void *data;
+    bool play;
 } WavData;
 
 extern bool AUDIO_START;
@@ -47,6 +48,7 @@ int wav_init(WavData *wavdata, void (*initStream) (struct _WavData *wavdata),
     wavdata->data = data;
     wavdata->initStream = initStream;
     wavdata->handleStream = handleStream;
+    wavdata->play = false;
 
     WAVEHDR *header = wavdata->header;
     /* WAVEFORMATEX *format = &wavdata->format; */
@@ -108,7 +110,8 @@ void CALLBACK WaveOutProc(HWAVEOUT wave_out_handle, UINT message,
             break;
         }
 		case WOM_DONE:{ 
-            while(AUDIO_START == false) ;
+            /* while(AUDIO_START == false); */
+            if(!wavdata->play || !AUDIO_START) break;
 			for(int i = 0; i < CHUNK_SIZE; ++i) {
                 wavdata->handleStream(&wavdata->chunks[wavdata->chunk_swap][i], wavdata);
 			}

@@ -9,6 +9,7 @@
 #define TWOPI (M_PI + M_PI)
 
 bool AUDIO_START = false;
+float master_amp = 0.8f;
 
 typedef struct _BasicOscillators {
     float frequency;
@@ -17,6 +18,7 @@ typedef struct _BasicOscillators {
     short type;
     float amplitude;
     float max_amp;
+    WavData *wavdata;
 } BasicOsilators;
 
 typedef struct _WavPlayer {
@@ -25,6 +27,7 @@ typedef struct _WavPlayer {
     uint32_t data_len;
     uint32_t pos;
     WAVEFORMATEX *format;
+    WavData *wavdata;
 } WavPlayer;
 
 typedef enum _Oscillator_type{
@@ -67,7 +70,7 @@ __declspec(dllexport) void handleWavPlayerStream(int16_t *stream, WavData *wavda
     if(userdata->pos > userdata->data_len) {
         return;
     }
-    *stream = userdata->data[userdata->pos];
+    *stream = userdata->data[userdata->pos] * master_amp;
     userdata->pos += 1;
 
 }
@@ -78,19 +81,19 @@ __declspec(dllexport) void handleOscillatorStream(int16_t *stream, WavData *wavd
     switch(userdata->type) {
         case OSCILLATOR_SINE:
         {
-            *stream = sin(userdata->wave_position) * userdata->max_amp;
+            *stream = sin(userdata->wave_position) * userdata->max_amp * master_amp;
             if (userdata->wave_position >= TWOPI) userdata->wave_position = 0;
             break;
         }
         case OSCILLATOR_SAW:
         {
-            *stream = (userdata->wave_position) *userdata->max_amp;
+            *stream = (userdata->wave_position) *userdata->max_amp * master_amp;
             if (userdata->wave_position >= 1) userdata->wave_position = 0;
             break;
         }
         case OSCILLATOR_SQUARE:
         {
-            *stream = round(userdata->wave_position) *  userdata->max_amp;
+            *stream = round(userdata->wave_position) *  userdata->max_amp * master_amp;
             if (userdata->wave_position >= 1) userdata->wave_position = 0;
             break;
         }
@@ -110,11 +113,11 @@ __declspec(dllexport) int loadWav(lua_State *L)
                                  sizeof(WAVEFORMATEX));
     WavPlayer *userdata = (WavPlayer *)lua_newuserdata(L,
                                  sizeof(WavPlayer));
-    lua_setglobal(L, file_path);
+    lua_setglobal(L, "WAV_FILE");
 
     userdata->data = NULL;
 
-    readWav("seaShells.wav", wavheader, &userdata->data, &userdata->data_len, L);
+    readWav(file_path, wavheader, &userdata->data, &userdata->data_len, L);
 
     format->wFormatTag = wavheader->wFormatTag;
     format->nChannels = wavheader->nChannels;
@@ -126,11 +129,27 @@ __declspec(dllexport) int loadWav(lua_State *L)
 
     userdata->max_amp = pow(2, format->wBitsPerSample - 1) - 1;
     wav_init(wavdata, initWavPlayerStream, handleWavPlayerStream, format, userdata);
+    userdata->wavdata = wavdata;
 
     return 0;
 }
+__declspec(dllexport) int playWav(lua_State *L)
+{
+    lua_getglobal(L, "WAV_FILE");
+    WavPlayer *userdata = (WavPlayer *)lua_touserdata(L,  -1);
+    userdata->wavdata->play = true;
+    return 0;
+}
 
-__declspec(dllexport) int playOScillator(lua_State *L)
+__declspec(dllexport) int playOscillator(lua_State *L)
+{
+    lua_getglobal(L, "BASIC_OSCILLATORS");
+    BasicOsilators *userdata = (BasicOsilators *)lua_touserdata(L,  -1);
+    userdata->wavdata->play = true;
+    return 0;
+}
+
+__declspec(dllexport) int loadOsillator(lua_State *L)
 {
     lua_getglobal(L, "BASIC_OSCILLATORS");
     BasicOsilators *userdata = (BasicOsilators *)lua_touserdata(L,  -1);
@@ -157,6 +176,11 @@ __declspec(dllexport) int playOScillator(lua_State *L)
     userdata->max_amp = (32767 * userdata->amplitude);
     return 0;
 }
+__declspec(dllexport) int masterAmp(lua_State *L)
+{
+    master_amp = (float)luaL_checknumber(L, 1);
+    return 0;
+}
 
 __declspec(dllexport) int play(lua_State *L)
 {
@@ -165,9 +189,12 @@ __declspec(dllexport) int play(lua_State *L)
 }
 
 __declspec(dllexport) luaL_Reg audio[] = {
-    {"playOscillator", playOScillator},
+    {"loadOsillator", loadOsillator},
     {"loadWav", loadWav},
+    {"playWav", playWav},
+    {"playOscillator", playOscillator},
     {"play", play},
+    {"masterAmp", masterAmp},
     {NULL, NULL}
 };
 
@@ -190,6 +217,7 @@ __declspec(dllexport) int luaopen_audio_lualib(lua_State *L)
     userdata->max_amp = (32767 * userdata->amplitude);
     lua_setglobal(L, "BASIC_OSCILLATORS");
     WavData *wavdata = (WavData *)lua_newuserdata(L, sizeof(WavData));
+    userdata->wavdata = wavdata;
     wav_init(wavdata, initOscillatorStream, handleOscillatorStream, format, userdata);
     luaL_newlib(L, audio);
     return 1;

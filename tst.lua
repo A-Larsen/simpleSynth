@@ -2,11 +2,11 @@ local audio = require("audio")
 
 -- audio.masterAmp(.5)
 
-audio.loadOsillator("sine", 50, 0.1)
-audio.loadWav("seaShells.wav")
+local osc_1 = audio.loadOsillator("sine", 50, 0.1)
+local wav_1 = audio.loadWav("seaShells.wav")
 
-audio.playWav()
-audio.playOscillator()
+audio.playWav(wav_1)
+audio.playOscillator(osc_1)
 audio.play()
 
 while true do

@@ -36,6 +36,8 @@ typedef enum _Oscillator_type{
     OSCILLATOR_SQUARE,
 }Oscillator_type;
 
+uint8_t OSCILLATOR_ID = 1;
+uint8_t WAVEFILE_ID = 1;
 
 __declspec(dllexport) void setStep(BasicOsilators *userdata)
 {
@@ -113,7 +115,9 @@ __declspec(dllexport) int loadWav(lua_State *L)
                                  sizeof(WAVEFORMATEX));
     WavPlayer *userdata = (WavPlayer *)lua_newuserdata(L,
                                  sizeof(WavPlayer));
-    lua_setglobal(L, "WAV_FILE");
+    char name[50];
+    sprintf(name, "%s_%d", "WAVE_FILE", WAVEFILE_ID);
+    lua_setglobal(L, name);
 
     userdata->data = NULL;
 
@@ -130,12 +134,16 @@ __declspec(dllexport) int loadWav(lua_State *L)
     userdata->max_amp = pow(2, format->wBitsPerSample - 1) - 1;
     wav_init(wavdata, initWavPlayerStream, handleWavPlayerStream, format, userdata);
     userdata->wavdata = wavdata;
-
-    return 0;
+    lua_pushnumber(L, (lua_Number)WAVEFILE_ID);
+    WAVEFILE_ID++;
+    return 1;
 }
 __declspec(dllexport) int playWav(lua_State *L)
 {
-    lua_getglobal(L, "WAV_FILE");
+    int id = (int)luaL_checknumber(L, 1);
+    char name[50];
+    sprintf(name, "%s_%d", "WAVE_FILE", id);
+    lua_getglobal(L, name);
     WavPlayer *userdata = (WavPlayer *)lua_touserdata(L,  -1);
     userdata->wavdata->play = true;
     return 0;
@@ -143,7 +151,10 @@ __declspec(dllexport) int playWav(lua_State *L)
 
 __declspec(dllexport) int playOscillator(lua_State *L)
 {
-    lua_getglobal(L, "BASIC_OSCILLATORS");
+    int id = (int)luaL_checknumber(L, 1);
+    char name[50];
+    sprintf(name, "%s_%d", "BASIC_OSCILLATOR", id);
+    lua_getglobal(L, name);
     BasicOsilators *userdata = (BasicOsilators *)lua_touserdata(L,  -1);
     userdata->wavdata->play = true;
     return 0;
@@ -159,7 +170,10 @@ __declspec(dllexport) int loadOsillator(lua_State *L)
                                  sizeof(WAVEFORMATEX));
     BasicOsilators *userdata = (BasicOsilators *)lua_newuserdata(L,
                                  sizeof(BasicOsilators));
-    lua_setglobal(L, "BASIC_OSCILLATORS");
+    char name[50];
+    sprintf(name, "%s_%d", "BASIC_OSCILLATOR", OSCILLATOR_ID);
+    lua_setglobal(L, name);
+
     WavData *wavdata = (WavData *)lua_newuserdata(L, sizeof(WavData));
 
     format->wFormatTag = WAVE_FORMAT_PCM;
@@ -193,7 +207,9 @@ __declspec(dllexport) int loadOsillator(lua_State *L)
         setStep(userdata);
     }
 
-    return 0;
+    lua_pushnumber(L, (lua_Number)OSCILLATOR_ID);
+    OSCILLATOR_ID++;
+    return 1;
 }
 __declspec(dllexport) int masterAmp(lua_State *L)
 {

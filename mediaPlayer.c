@@ -54,6 +54,7 @@ int main(int argc, char **argv)
     printf("sampleRate: %lu\n", format.nSamplesPerSec);
     userdata.max_amp = pow(2, format.wBitsPerSample - 1) - 1;
     wav_init(&wavdata, initStream, handleStream, &format, &userdata);
+    wavdata.play = true;
     while(!quit);
     freeWavData(userdata.data);
 	return 0;

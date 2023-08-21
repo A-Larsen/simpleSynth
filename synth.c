@@ -153,6 +153,7 @@ int main(int argc, char **argv)
     static bool quit = false;
     float amp_step = 0.01f;
     float freq_step = 10.0f;
+    wavdata.play = true;
 	while(!quit) {
 		switch(_getche()) {
 			case 72: { // up

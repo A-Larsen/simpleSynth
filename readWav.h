@@ -1,3 +1,6 @@
+#ifndef _READWAV_H_
+#define _READWAV_H_
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -97,3 +100,5 @@ void freeWavData(int16_t *data)
 {
     free(data);
 }
+
+#endif // _READWAV_H_

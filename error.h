@@ -1,5 +1,5 @@
-#ifndef PERROR_H
-#define PERROR_H
+#ifndef _PERROR_H_
+#define _PERROR_G_
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdint.h>
@@ -28,4 +28,4 @@ void _error(const char *file, const char *function, uint16_t line, const char *f
 }
 
 
-#endif // PERROR
+#endif // _PERROR_F_

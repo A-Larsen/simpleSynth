@@ -1,5 +1,5 @@
-#ifndef AUDIO_H 
-#define AUDIO_H
+#ifndef _AUDIO_H_ 
+#define _AUDIO_H_
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <mmsystem.h>
@@ -124,4 +124,4 @@ void CALLBACK WaveOutProc(HWAVEOUT wave_out_handle, UINT message,
 		}
 	}
 }
-#endif // AUDIO_H
+#endif // _AUDIO_H_

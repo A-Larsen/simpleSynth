@@ -307,6 +307,30 @@ int main(int argc, char **argv)
                 setStep(&userdata);
                 break;
             } 
+            case 'l': 
+            {
+                userdata.frequency = pitchToFrequency(base_pitch + 14);
+                setStep(&userdata);
+                break;
+            } 
+            case 'p': 
+            {
+                userdata.frequency = pitchToFrequency(base_pitch + 15);
+                setStep(&userdata);
+                break;
+            } 
+            case ';': 
+            {
+                userdata.frequency = pitchToFrequency(base_pitch + 16);
+                setStep(&userdata);
+                break;
+            } 
+            case '\'': 
+            {
+                userdata.frequency = pitchToFrequency(base_pitch + 17);
+                setStep(&userdata);
+                break;
+            } 
             case 'z': 
             {
                 base_pitch -= 12;

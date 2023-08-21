@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "audio.h"
+#include "audio-tools.h"
 
 #define M_PI ((double)3.14159265359)
 #define TWOPI (M_PI + M_PI)
@@ -152,12 +153,13 @@ int main(int argc, char **argv)
     wav_init(&wavdata, initStream, handleStream, &format, &userdata);
     static bool quit = false;
     float amp_step = 0.01f;
-    float freq_step = 10.0f;
+    float freq_step = 10;
+    float pitch_step = 1.0f;
     wavdata.play = true;
 	while(!quit) {
 		switch(_getche()) {
 			case 72: { // up
-                 if (!(userdata.frequency + freq_step < (float)SAMPLING_RATE / 2.0f)) {
+                 if (!(userdata.frequency < (float)SAMPLING_RATE / 2.0f)) {
                      break;
                  }
                 userdata.frequency += freq_step;

@@ -16,3 +16,6 @@ device instead than that seems to help
 - https://github.com/OneLoneCoder/synth/blob/master/olcNoiseMaker.h#L228[one lone coder sound maker]
 - https://learn.microsoft.com/en-us/windows/win32/api/mmeapi/nf-mmeapi-waveoutopen[windows winMM apis]
 - https://pgl.yoyo.org/luai/i/lua_newuserdata[quick look up]
+- https://www.reddit.com/r/musictheory/comments/j3q0i3/how_can_you_calculate_the_frequency_of_a_given/[pitch frequency equation]
+- https://www.johndcook.com/blog/2013/06/22/how-to-convert-frequency-to-pitch/[frequency to pitch]
+- https://en.wikipedia.org/wiki/Natural_logarithm[natural log]

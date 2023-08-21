@@ -130,10 +130,6 @@ __declspec(dllexport) int loadWav(lua_State *L)
     return 0;
 }
 
-__declspec(dllexport) int frewWav(lua_State *L)
-{
-    return 0;
-}
 __declspec(dllexport) int playOScillator(lua_State *L)
 {
     lua_getglobal(L, "BASIC_OSCILLATORS");
@@ -161,6 +157,7 @@ __declspec(dllexport) int playOScillator(lua_State *L)
     userdata->max_amp = (32767 * userdata->amplitude);
     return 0;
 }
+
 __declspec(dllexport) int play(lua_State *L)
 {
     AUDIO_START = true;

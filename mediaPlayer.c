@@ -14,6 +14,7 @@ typedef struct _UserData {
 } UserData;
 
 bool quit = false;
+bool AUDIO_START = true;
 
 void initStream(WavData *wavdata)
 {

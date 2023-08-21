@@ -20,7 +20,7 @@ typedef enum _Oscillator_type{
     OSCILLATOR_SQUARE,
 }Oscillator_type;
 
-
+bool AUDIO_START = true;
 
 void setStep(UserData *userdata)
 {

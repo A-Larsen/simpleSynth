@@ -4,10 +4,11 @@ using voicemeeter seems to cause issues. If you play sound directy through the
 device instead than that seems to help
 
 == TODO
-* [ ] get callback to read a file stream from a wave file
+* [x] get callback to read a file stream from a wave file
 * [ ] create an array of frequency to pitch conversions
 * [ ] get midi to work
-* [ ] play back wav files
+* [x] play back wav files
+* [ ] Make a volume envolope controler
 
 == Links
 - http://croakingkero.com/tutorials/sound_winmm/[Nick Walton website winMM]

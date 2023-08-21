@@ -101,6 +101,7 @@ __declspec(dllexport) void handleOscillatorStream(int16_t *stream, WavData *wavd
 __declspec(dllexport) int loadWav(lua_State *L)
 {
     /* WavHeader wavheader; */
+    char *file_path = (char *)luaL_checkstring(L, 1);
     WavHeader *wavheader = (WavHeader *)lua_newuserdata(L, sizeof(WavHeader));
     WavData *wavdata = (WavData *)lua_newuserdata(L, sizeof(WavData));
     /* WavData wavdata; */
@@ -109,7 +110,7 @@ __declspec(dllexport) int loadWav(lua_State *L)
                                  sizeof(WAVEFORMATEX));
     WavPlayer *userdata = (WavPlayer *)lua_newuserdata(L,
                                  sizeof(WavPlayer));
-    lua_setglobal(L, "WAV_Player");
+    lua_setglobal(L, file_path);
 
     userdata->data = NULL;
 

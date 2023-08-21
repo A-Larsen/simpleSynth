@@ -1,5 +1,6 @@
 local audio = require("audio")
-audio.loadWav()
+
+audio.loadWav("seaShells.wav")
 audio.playOscillator("square", 50, 0.5)
 audio.play()
 

@@ -1,5 +1,6 @@
 == Issues
-using voicemeeter seems to cause issures if you play sound directy through the
+=== Sound Device
+using voicemeeter seems to cause issues. if you play sound directy through the
 device instead than that seems to help
 
 == Links

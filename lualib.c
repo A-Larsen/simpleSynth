@@ -2,6 +2,7 @@
 #include <lauxlib.h>
 #include <stdint.h>
 
+#include "BasicOscillator.h"
 #include "audio.h"
 #include "readWav.h"
 
@@ -11,15 +12,6 @@
 bool AUDIO_START = false;
 float master_amp = 0.8f;
 
-typedef struct _BasicOscillators {
-    float frequency;
-    float wave_position;
-    float wave_step;
-    short type;
-    float amplitude;
-    float max_amp;
-    WavData *wavdata;
-} BasicOsilators;
 
 typedef struct _WavPlayer {
     float max_amp;
@@ -30,38 +22,11 @@ typedef struct _WavPlayer {
     WavData *wavdata;
 } WavPlayer;
 
-typedef enum _Oscillator_type{
-    OSCILLATOR_SINE = 0,
-    OSCILLATOR_SAW,
-    OSCILLATOR_SQUARE,
-}Oscillator_type;
 
 uint8_t OSCILLATOR_ID = 1;
 uint8_t WAVEFILE_ID = 1;
 
-__declspec(dllexport) void setStep(BasicOsilators *userdata)
-{
-    switch(userdata->type) {
-        case OSCILLATOR_SINE: 
-        {
-            userdata->wave_step = TWOPI / ((float)SAMPLING_RATE / userdata->frequency);
-            break;
-        }
-        case OSCILLATOR_SAW: 
-        case OSCILLATOR_SQUARE: 
-        {
-            userdata->wave_step = 1 / ((float)SAMPLING_RATE / userdata->frequency);
-            break;
-        }
-    }
 
-}
-
-__declspec(dllexport) void initOscillatorStream(WavData *wavdata)
-{
-    BasicOsilators *userdata = (BasicOsilators *)wavdata->data;
-    setStep(userdata);
-}
 __declspec(dllexport) void initWavPlayerStream(WavData *wavdata)
 {
 
@@ -77,39 +42,12 @@ __declspec(dllexport) void handleWavPlayerStream(int16_t *stream, WavData *wavda
 
 }
 
-__declspec(dllexport) void handleOscillatorStream(int16_t *stream, WavData *wavdata)
-{
-    BasicOsilators *userdata = (BasicOsilators *)wavdata->data;
-    switch(userdata->type) {
-        case OSCILLATOR_SINE:
-        {
-            *stream = sin(userdata->wave_position) * userdata->max_amp * master_amp;
-            if (userdata->wave_position >= TWOPI) userdata->wave_position = 0;
-            break;
-        }
-        case OSCILLATOR_SAW:
-        {
-            *stream = (userdata->wave_position) *userdata->max_amp * master_amp;
-            if (userdata->wave_position >= 1) userdata->wave_position = 0;
-            break;
-        }
-        case OSCILLATOR_SQUARE:
-        {
-            *stream = round(userdata->wave_position) *  userdata->max_amp * master_amp;
-            if (userdata->wave_position >= 1) userdata->wave_position = 0;
-            break;
-        }
-    }
-    userdata->wave_position += userdata->wave_step;
-}
 
 __declspec(dllexport) int loadWav(lua_State *L)
 {
-    /* WavHeader wavheader; */
     char *file_path = (char *)luaL_checkstring(L, 1);
     WavHeader *wavheader = (WavHeader *)lua_newuserdata(L, sizeof(WavHeader));
     WavData *wavdata = (WavData *)lua_newuserdata(L, sizeof(WavData));
-    /* WavData wavdata; */
 
     WAVEFORMATEX *format = (WAVEFORMATEX *)lua_newuserdata(L, 
                                  sizeof(WAVEFORMATEX));
@@ -155,7 +93,7 @@ __declspec(dllexport) int playOscillator(lua_State *L)
     char name[50];
     sprintf(name, "%s_%d", "BASIC_OSCILLATOR", id);
     lua_getglobal(L, name);
-    BasicOsilators *userdata = (BasicOsilators *)lua_touserdata(L,  -1);
+    BasicOscillator *userdata = (BasicOscillator *)lua_touserdata(L,  -1);
     userdata->wavdata->play = true;
     return 0;
 }
@@ -168,8 +106,8 @@ __declspec(dllexport) int loadOsillator(lua_State *L)
 
     WAVEFORMATEX *format = (WAVEFORMATEX *)lua_newuserdata(L, 
                                  sizeof(WAVEFORMATEX));
-    BasicOsilators *userdata = (BasicOsilators *)lua_newuserdata(L,
-                                 sizeof(BasicOsilators));
+    BasicOscillator *userdata = (BasicOscillator *)lua_newuserdata(L,
+                                 sizeof(BasicOscillator));
     char name[50];
     sprintf(name, "%s_%d", "BASIC_OSCILLATOR", OSCILLATOR_ID);
     lua_setglobal(L, name);
@@ -191,20 +129,19 @@ __declspec(dllexport) int loadOsillator(lua_State *L)
     userdata->frequency = freq;
     userdata->amplitude = amp;
     userdata->max_amp = (32767 * userdata->amplitude);
+    userdata->base_pitch = 48;
+    userdata->amp_step = 0.01f;
 
-    wav_init(wavdata, initOscillatorStream, handleOscillatorStream, format, userdata);
+    wav_init(wavdata, BasicOscillator_initStream, BasicOscillator_handleStream, format, userdata);
 
     if (strcmp(osc, "sine") == 0) {
-        userdata->type = OSCILLATOR_SINE;
-        setStep(userdata);
+        BasicOscillator_setType(userdata, OSCILLATOR_SINE);
     }
     if (strcmp(osc, "saw") == 0) {
-        userdata->type = OSCILLATOR_SAW;
-        setStep(userdata);
+        BasicOscillator_setType(userdata, OSCILLATOR_SAW);
     }
     if (strcmp(osc, "square") == 0) {
-        userdata->type = OSCILLATOR_SQUARE;
-        setStep(userdata);
+        BasicOscillator_setType(userdata, OSCILLATOR_SQUARE);
     }
 
     lua_pushnumber(L, (lua_Number)OSCILLATOR_ID);

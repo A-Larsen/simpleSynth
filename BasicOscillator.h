@@ -20,6 +20,7 @@ typedef struct _BasicOscillator {
     float max_amp;
     float amp_step;
     float base_pitch;
+    WavData *wavdata;
 } BasicOscillator;
 
 typedef enum _Oscillator_type{

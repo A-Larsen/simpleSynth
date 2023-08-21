@@ -1,7 +1,10 @@
 == Issues
 === Sound Device
-using voicemeeter seems to cause issues. if you play sound directy through the
+using voicemeeter seems to cause issues. If you play sound directy through the
 device instead than that seems to help
+
+== TODO
+* [ ] get callback to read a file stream from a wave file
 
 == Links
 - http://croakingkero.com/tutorials/sound_winmm/[Nick Walton website winMM]

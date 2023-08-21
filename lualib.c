@@ -66,6 +66,8 @@ __declspec(dllexport) int loadOsillator(lua_State *L)
 
 
     BasicOscillator_init(userdata);
+    BasicOscillator_setFreq(userdata, freq);
+    BasicOscillator_setAmp(userdata, amp);
 
     if (strcmp(osc, "sine") == 0) {
         BasicOscillator_setType(userdata, OSCILLATOR_SINE);

@@ -64,6 +64,7 @@ void BasicOscillator_ampDown(BasicOscillator *userdata)
     userdata->max_amp = (32767 * userdata->amplitude);
 
 }
+
 void BasicOscillator_ampUp(BasicOscillator *userdata)
 {
     if (userdata->amplitude + userdata->amp_step >= 1 ) {
@@ -71,6 +72,12 @@ void BasicOscillator_ampUp(BasicOscillator *userdata)
     }
     userdata->amplitude += userdata->amp_step;
     userdata->max_amp = (32767 * userdata->amplitude);
+
+}
+
+void BasicOscillator_setAmp(BasicOscillator *userdata, float amp)
+{
+    userdata->amplitude = amp;
 
 }
 
@@ -85,6 +92,7 @@ void BasicOscillator_setPitch(BasicOscillator *userdata, uint16_t p)
     userdata->frequency = pitchToFrequency(p);
     _BasicOscillator_setStep(userdata);
 }
+
 void BasicOscillator_mapKey(BasicOscillator *userdata, char key)
 {
     for (int i = 0; i < KEYNOTES_LEN; ++i) {
@@ -93,9 +101,15 @@ void BasicOscillator_mapKey(BasicOscillator *userdata, char key)
         }
     }
 }
+
 void BasicOscillator_setBasePitch(BasicOscillator *userdata, uint16_t base)
 {
     userdata->base_pitch = base;
+}
+
+void BasicOscillator_setFreq(BasicOscillator *userdata, float frequency)
+{
+    userdata->frequency = frequency;
 }
 
 void BasicOscillator_handleStream(int16_t *stream, WavData *wavdata)
@@ -145,6 +159,7 @@ void BasicOscillator_init(BasicOscillator *userdata)
             BasicOscillator_handleStream, &userdata->format, userdata);
 
 }
+
 void BasicOscillator_play(BasicOscillator *userdata, bool play)
 {
 

@@ -1,5 +1,10 @@
+== Issues
+using voicemeeter seems to cause issures if you play sound directy through the
+device instead than that seems to help
+
 == Links
-http://croakingkero.com/tutorials/sound_winmm/[Nick Walton website winMM]
-https://www.youtube.com/watch?v=z-zneNKF_u4[Nick Walton Video sound in Windows winMM]
-https://github.com/OneLoneCoder/synth/blob/master/olcNoiseMaker.h#L228[one lone coder sound maker]
-https://learn.microsoft.com/en-us/windows/win32/api/mmeapi/nf-mmeapi-waveoutopen[windows winMM apis]
+- http://croakingkero.com/tutorials/sound_winmm/[Nick Walton website winMM]
+- https://www.youtube.com/watch?v=z-zneNKF_u4[Nick Walton Video sound in Windows winMM]
+- https://github.com/OneLoneCoder/synth/blob/master/olcNoiseMaker.h#L228[one lone coder sound maker]
+- https://learn.microsoft.com/en-us/windows/win32/api/mmeapi/nf-mmeapi-waveoutopen[windows winMM apis]
+- https://pgl.yoyo.org/luai/i/lua_newuserdata[quick look up]

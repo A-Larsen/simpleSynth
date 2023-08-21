@@ -13,6 +13,3 @@ This synth is controlled within the cli (for now)
 OSCILLATOR is the choice of and oscillator you want, you can choose from "sine",
 "saw" and "square". FREQUENCY is the frequency of the oscillator and AMPILTUDE
 is the amplitude of the oscillator
-
-== Links
-- https://pgl.yoyo.org/luai/i/lua_newuserdata[quick look up]

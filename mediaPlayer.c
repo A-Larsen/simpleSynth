@@ -11,8 +11,8 @@ typedef struct _UserData {
     uint32_t data_len;
     uint32_t pos;
     WAVEFORMATEX *format;
-
 } UserData;
+
 bool quit = false;
 
 void initStream(WavData *wavdata)
@@ -40,7 +40,7 @@ int main(int argc, char **argv)
     UserData userdata;
     userdata.data = NULL;
 
-    readWav("seaShells.wav", &wavheader, &userdata.data, &userdata.data_len);
+    readWav("seaShells.wav", &wavheader, &userdata.data, &userdata.data_len, NULL);
 
     format.wFormatTag = wavheader.wFormatTag;
     format.nChannels = wavheader.nChannels;

@@ -8,7 +8,7 @@ device instead than that seems to help
 * [ ] create an array of frequency to pitch conversions
 * [ ] get midi to work
 * [x] play back wav files
-* [ ] Make a volume envolope controler
+* [ ] Make a volume envelope controler
 
 == Links
 - http://croakingkero.com/tutorials/sound_winmm/[Nick Walton website winMM]

@@ -108,7 +108,13 @@ __declspec(dllexport) luaL_Reg audio[] = {
 
 __declspec(dllexport) int luaopen_audio_lualib(lua_State *L)
 {
+    WAVEFORMATEX *format = (WAVEFORMATEX *)lua_newuserdata(L, sizeof(WAVEFORMATEX));
     UserData *userdata = (UserData *)lua_newuserdata(L, sizeof(UserData));
+    format->wFormatTag = WAVE_FORMAT_PCM;
+    format->nChannels = 1;
+    format->nSamplesPerSec = SAMPLING_RATE;
+    format->wBitsPerSample = 16;
+    format->cbSize = 0;
     userdata->frequency = 400;
     userdata->wave_position = 0;
     userdata->wave_step = 0;
@@ -118,7 +124,7 @@ __declspec(dllexport) int luaopen_audio_lualib(lua_State *L)
     lua_setglobal(L, "USERDATA");
     WavData *wavdata = (WavData *)lua_newuserdata(L, sizeof(WavData));
     lua_setglobal(L, "WAVDATA");
-    wav_init(wavdata, initStream, handleStream, userdata);
+    wav_init(wavdata, initStream, handleStream, format, userdata);
     luaL_newlib(L, audio);
     return 1;
 }

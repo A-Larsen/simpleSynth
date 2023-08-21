@@ -19,7 +19,7 @@
 typedef struct _WavData {
     const uint16_t sample_rate;
     HWAVEOUT wave_out;
-    WAVEFORMATEX format;
+    WAVEFORMATEX *format;
     const uint16_t chunk_size;
     const uint8_t chunk_count;
     WAVEHDR header[CHUNK_COUNT];
@@ -35,20 +35,20 @@ void CALLBACK WaveOutProc(HWAVEOUT, UINT, DWORD_PTR, DWORD_PTR, DWORD_PTR);
 
 int wav_init(WavData *wavdata, void (*initStream) (struct _WavData *wavdata), 
             void (*handleStream) (int16_t *stream, struct _WavData *wavdata),
-            void *data) 
+            WAVEFORMATEX *format, void *data) 
 {
-    wavdata->format.wFormatTag = WAVE_FORMAT_PCM;
-    wavdata->format.nChannels = 1;
-    wavdata->format.nSamplesPerSec = SAMPLING_RATE;
-    wavdata->format.wBitsPerSample = 16;
-    wavdata->format.cbSize = 0;
+    /* wavdata->format.wFormatTag = WAVE_FORMAT_PCM; */
+    /* wavdata->format.nChannels = 1; */
+    /* wavdata->format.nSamplesPerSec = SAMPLING_RATE; */
+    /* wavdata->format.wBitsPerSample = 16; */
+    /* wavdata->format.cbSize = 0; */
     wavdata->chunk_swap = 0;
     wavdata->data = data;
     wavdata->initStream = initStream;
     wavdata->handleStream = handleStream;
 
     WAVEHDR *header = wavdata->header;
-    WAVEFORMATEX *format = &wavdata->format;
+    /* WAVEFORMATEX *format = &wavdata->format; */
 
     format->nBlockAlign = format->nChannels * format->wBitsPerSample / 8;
     format->nAvgBytesPerSec = format->nSamplesPerSec * format->nBlockAlign;
@@ -84,6 +84,7 @@ int wav_init(WavData *wavdata, void (*initStream) (struct _WavData *wavdata),
         }
         
     }
+    wavdata->format = format;
     wavdata->initStream(wavdata);
 
 	return 0;

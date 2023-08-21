@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 
 #include "audio.h"
@@ -117,12 +118,6 @@ void fillBuffs(UserData *userdata, int16_t stream[3][SAMPLING_RATE])
 int main(int argc, char **argv)
 {
     WavData wavdata;
-    WAVEFORMATEX format;
-    format.wFormatTag = WAVE_FORMAT_PCM;
-    format.nChannels = 1;
-    format.nSamplesPerSec = SAMPLING_RATE;
-    format.wBitsPerSample = 16;
-    format.cbSize = 0;
     UserData userdata = {
         .frequency = 400,
         .wave_position = 0,
@@ -149,7 +144,7 @@ int main(int argc, char **argv)
     /*     sscanf_s(argv[3], "%f", &userdata.amplitude); */
     /* } */
     userdata.max_amp = (32767 * userdata.amplitude);
-    wav_init(&wavdata, initStream, handleStream, &format, &userdata);
+    wav_init(&wavdata, initStream, handleStream, &userdata);
     static bool quit = false;
     float amp_step = 0.01f;
     float freq_step = 10.0f;

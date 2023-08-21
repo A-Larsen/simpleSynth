@@ -1,5 +1,5 @@
 local audio = require("audio")
-audio.playOscillator("sine", 80, 0.5)
+audio.playOscillator("sine", 400, 0.5)
 
 while true do
     local s = io.read(1)

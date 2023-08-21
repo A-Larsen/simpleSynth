@@ -161,19 +161,23 @@ int main(int argc, char **argv)
 	while(!quit) {
 		switch(_getche()) {
 			case 72: { // up
-                 if (!(userdata.frequency < (float)SAMPLING_RATE / 2.0f)) {
+                uint16_t pitch = frequencyToPitch(userdata.frequency);
+                 if (pitch + 1 > 108) {
                      break;
                  }
-                userdata.frequency += freq_step;
+                 pitch += 1;
+                userdata.frequency = pitchToFrequency(pitch);
                 setStep(&userdata);
 				printf("Frequency: %f\n", userdata.frequency);
                 break;
 			};
 			case 80: { // down
-                 if (!(userdata.frequency - freq_step > 0)) {
+                uint16_t pitch = frequencyToPitch(userdata.frequency);
+                 if (pitch - 1 < 0) {
                      break;
                  }
-				userdata.frequency -= freq_step;
+                pitch -= 1;
+                userdata.frequency = pitchToFrequency(pitch);
                 setStep(&userdata);
 				printf("Frequency: %f\n", userdata.frequency);
                 break;

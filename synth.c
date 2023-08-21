@@ -307,6 +307,16 @@ int main(int argc, char **argv)
                 setStep(&userdata);
                 break;
             } 
+            case 'z': 
+            {
+                base_pitch -= 12;
+                break;
+            } 
+            case 'x': 
+            {
+                base_pitch += 12;
+                break;
+            } 
 		}
 	}
 

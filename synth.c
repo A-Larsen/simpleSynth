@@ -12,7 +12,7 @@ int main(int argc, char **argv)
 
     BasicOscillator userdata;
     mixer.master_amp = 0.8f;
-    BasicOscillator_init(&userdata, &mixer);
+    BasicOscillator_init(&userdata);
 
     BasicOscillator_setPitch(&userdata, 72);
     BasicOscillator_play(&userdata, true);

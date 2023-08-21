@@ -7,6 +7,8 @@
 #include "readWav.h"
 #include "mixer.h"
 
+extern Mixer mixer;
+
 typedef struct _WavPlayer {
     float max_amp;
     int16_t *data;
@@ -14,7 +16,6 @@ typedef struct _WavPlayer {
     uint32_t pos;
     WAVEFORMATEX format;
     WavData wavdata;
-    Mixer *mixer;
 } WavPlayer;
 
 void WavPlayer_initStream(WavData *wavdata)
@@ -27,17 +28,15 @@ void WavPlayer_handleStream(int16_t *stream, WavData *wavdata)
     if(userdata->pos > userdata->data_len) {
         return;
     }
-    // multiple this by master amp in the future
-    *stream = userdata->data[userdata->pos] * userdata->mixer->master_amp;
+    *stream = userdata->data[userdata->pos] * mixer.master_amp;
     userdata->pos += 1;
 
 }
 
 // lua state can be null
-void WavPlayer_init(WavPlayer *userdata, Mixer *mixer, const char *file_path, lua_State *L)
+void WavPlayer_init(WavPlayer *userdata, const char *file_path, lua_State *L)
 {
     userdata->data = NULL;
-    userdata->mixer = mixer;
 
     WavHeader wavheader;
     readWav(file_path, &wavheader, &userdata->data, &userdata->data_len, L);

@@ -26,7 +26,7 @@ __declspec(dllexport) int loadWav(lua_State *L)
     sprintf(name, "%s_%d", "WAVE_FILE", WAVEFILE_ID);
     lua_setglobal(L, name);
 
-    WavPlayer_init(userdata, &mixer, file_path, L);
+    WavPlayer_init(userdata, file_path, L);
     lua_pushnumber(L, (lua_Number)WAVEFILE_ID);
     WAVEFILE_ID++;
     return 1;
@@ -66,7 +66,7 @@ __declspec(dllexport) int loadOsillator(lua_State *L)
     lua_setglobal(L, name);
 
 
-    BasicOscillator_init(userdata, &mixer);
+    BasicOscillator_init(userdata);
 
     if (strcmp(osc, "sine") == 0) {
         BasicOscillator_setType(userdata, OSCILLATOR_SINE);

@@ -9,12 +9,11 @@ typedef struct _UserData {
     float max_amp;
     int16_t *data;
     uint32_t data_len;
-    float frequency;
-    float wave_step;
-    float wave_position;
+    uint32_t pos;
     WAVEFORMATEX *format;
 
 } UserData;
+bool quit = false;
 
 void initStream(WavData *wavdata)
 {
@@ -24,14 +23,12 @@ void initStream(WavData *wavdata)
 void handleStream(int16_t *stream, WavData *wavdata)
 {
     UserData *userdata = (UserData *)wavdata->data;
-    if(userdata->wave_position > userdata->data_len) {
+    if(userdata->pos > userdata->data_len) {
+        quit = true;
         return;
     }
-    *stream = *userdata->data;
-    /* *stream = userdata->data[(int)userdata->wave_position]; */
-    /* memcpy(stream, userdata->data, 1); */
-    /* userdata->wave_position += userdata->wave_step; */
-    userdata->data += (int)userdata->frequency;
+    *stream = userdata->data[userdata->pos];
+    userdata->pos += 1;
 }
 
 
@@ -43,16 +40,7 @@ int main(int argc, char **argv)
     UserData userdata;
     userdata.data = NULL;
 
-    readWav("test.wav", &wavheader, &userdata.data, &userdata.data_len);
-    /* format.wFormatTag = WAVE_FORMAT_PCM; */
-    /* format.nChannels = 1; */
-    /* format.nSamplesPerSec = SAMPLING_RATE; */
-    /* format.wBitsPerSample = 16; */
-    /* format.cbSize = 0; */
-    /* printf("data_len: %d\n", userdata.data_len); */
-    /* for (uint32_t i = 0; i < userdata.data_len; ++i) { */
-    /*     printf("%d\n", userdata.data[i]); */
-    /* } */
+    readWav("seaShells.wav", &wavheader, &userdata.data, &userdata.data_len);
 
     format.wFormatTag = wavheader.wFormatTag;
     format.nChannels = wavheader.nChannels;
@@ -60,16 +48,12 @@ int main(int argc, char **argv)
     format.wBitsPerSample = wavheader.wBitsPerSample;
     format.cbSize = wavheader.cbSize;
     userdata.format = &format;
+    userdata.pos = 0;
 
     printf("sampleRate: %lu\n", format.nSamplesPerSec);
     userdata.max_amp = pow(2, format.wBitsPerSample - 1) - 1;
-    userdata.frequency = 1;
-    userdata.wave_position = 0;
-    userdata.wave_step = 1.0f / ((float)format.nSamplesPerSec / (float)userdata.frequency);
-    printf("wave_step: %f\n", userdata.wave_step);
     wav_init(&wavdata, initStream, handleStream, &format, &userdata);
-    while(1);
-    /* while(1){ printf("nice\n"); }; */
+    while(!quit);
     freeWavData(userdata.data);
 	return 0;
 }

@@ -3,11 +3,11 @@
 #include <math.h>
 #include <stdint.h>
 
-float pitchToFrequency(float semitone)
+#define MIDDLE_C 261.626f
+
+float pitchToFrequency(uint16_t p)
 {
-        semitone -= 4 * 12;
-        // 440 hz is A4
-        return 440 * pow(2, semitone / 12);
+    return pow(2, (((float)p - 60.0f) / 12.0f)) * MIDDLE_C;
 }
 uint16_t frequencyToPitch(float f)
 {
@@ -17,7 +17,7 @@ uint16_t frequencyToPitch(float f)
 
     // round(12 * log(f / 261.626) / log(2)) gives us the half steps awawy from
     // middle c
-    return 60 + round(12 * log(f / 261.626) / log(2));
+    return 60 + round(12 * log(f / MIDDLE_C) / log(2));
 }
 
 #endif // _AUDIO_TOOLS_H_

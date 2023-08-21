@@ -155,7 +155,8 @@ int main(int argc, char **argv)
     float amp_step = 0.01f;
     float freq_step = 10;
     float pitch_step = 1.0f;
-
+    printf("frequency to pitch: %u\n", frequencyToPitch(246.94));
+    printf("pitch to frequency: %f\n", pitchToFrequency(59));
     wavdata.play = true;
 	while(!quit) {
 		switch(_getche()) {

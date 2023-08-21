@@ -151,13 +151,34 @@ __declspec(dllexport) int playOscillator(lua_State *L)
 
 __declspec(dllexport) int loadOsillator(lua_State *L)
 {
-    lua_getglobal(L, "BASIC_OSCILLATORS");
-    BasicOsilators *userdata = (BasicOsilators *)lua_touserdata(L,  -1);
-    lua_pop(L, 1);
     char *osc = (char *)luaL_checkstring(L,  1);
     float freq = (float)luaL_checknumber(L,  2);
     float amp = (float)luaL_checknumber(L,  3);
+
+    WAVEFORMATEX *format = (WAVEFORMATEX *)lua_newuserdata(L, 
+                                 sizeof(WAVEFORMATEX));
+    BasicOsilators *userdata = (BasicOsilators *)lua_newuserdata(L,
+                                 sizeof(BasicOsilators));
+    lua_setglobal(L, "BASIC_OSCILLATORS");
+    WavData *wavdata = (WavData *)lua_newuserdata(L, sizeof(WavData));
+
+    format->wFormatTag = WAVE_FORMAT_PCM;
+    format->nChannels = 1;
+    format->nSamplesPerSec = SAMPLING_RATE;
+    format->wBitsPerSample = 16;
+    format->cbSize = 0;
+    userdata->frequency = 400;
+    userdata->wave_position = 0;
+    userdata->wave_step = 0;
+    userdata->amplitude = 0.0f;
+    userdata->type = OSCILLATOR_SINE;
+    userdata->max_amp = (32767 * userdata->amplitude);
+    userdata->wavdata = wavdata;
     userdata->frequency = freq;
+    userdata->amplitude = amp;
+    userdata->max_amp = (32767 * userdata->amplitude);
+
+    wav_init(wavdata, initOscillatorStream, handleOscillatorStream, format, userdata);
 
     if (strcmp(osc, "sine") == 0) {
         userdata->type = OSCILLATOR_SINE;
@@ -172,8 +193,6 @@ __declspec(dllexport) int loadOsillator(lua_State *L)
         setStep(userdata);
     }
 
-    userdata->amplitude = amp;
-    userdata->max_amp = (32767 * userdata->amplitude);
     return 0;
 }
 __declspec(dllexport) int masterAmp(lua_State *L)
@@ -200,25 +219,6 @@ __declspec(dllexport) luaL_Reg audio[] = {
 
 __declspec(dllexport) int luaopen_audio_lualib(lua_State *L)
 {
-    WAVEFORMATEX *format = (WAVEFORMATEX *)lua_newuserdata(L, 
-                                 sizeof(WAVEFORMATEX));
-    BasicOsilators *userdata = (BasicOsilators *)lua_newuserdata(L,
-                                 sizeof(BasicOsilators));
-    format->wFormatTag = WAVE_FORMAT_PCM;
-    format->nChannels = 1;
-    format->nSamplesPerSec = SAMPLING_RATE;
-    format->wBitsPerSample = 16;
-    format->cbSize = 0;
-    userdata->frequency = 400;
-    userdata->wave_position = 0;
-    userdata->wave_step = 0;
-    userdata->amplitude = 0.0f;
-    userdata->type = OSCILLATOR_SINE;
-    userdata->max_amp = (32767 * userdata->amplitude);
-    lua_setglobal(L, "BASIC_OSCILLATORS");
-    WavData *wavdata = (WavData *)lua_newuserdata(L, sizeof(WavData));
-    userdata->wavdata = wavdata;
-    wav_init(wavdata, initOscillatorStream, handleOscillatorStream, format, userdata);
     luaL_newlib(L, audio);
     return 1;
 }

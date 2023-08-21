@@ -67,7 +67,7 @@ __declspec(dllexport) int playOscillator(lua_State *L)
     sprintf(name, "%s_%d", "BASIC_OSCILLATOR", id);
     lua_getglobal(L, name);
     BasicOscillator *userdata = (BasicOscillator *)lua_touserdata(L,  -1);
-    userdata->wavdata->play = true;
+    BasicOscillator_play(userdata, true);
     return 0;
 }
 
@@ -77,35 +77,36 @@ __declspec(dllexport) int loadOsillator(lua_State *L)
     float freq = (float)luaL_checknumber(L,  2);
     float amp = (float)luaL_checknumber(L,  3);
 
-    WAVEFORMATEX *format = (WAVEFORMATEX *)lua_newuserdata(L, 
-                                 sizeof(WAVEFORMATEX));
+    /* /1* WAVEFORMATEX *format = (WAVEFORMATEX *)lua_newuserdata(L, *1/ */ 
+    /*                              sizeof(WAVEFORMATEX)); */
     BasicOscillator *userdata = (BasicOscillator *)lua_newuserdata(L,
                                  sizeof(BasicOscillator));
     char name[50];
     sprintf(name, "%s_%d", "BASIC_OSCILLATOR", OSCILLATOR_ID);
     lua_setglobal(L, name);
 
-    WavData *wavdata = (WavData *)lua_newuserdata(L, sizeof(WavData));
+    /* WavData *wavdata = (WavData *)lua_newuserdata(L, sizeof(WavData)); */
 
-    format->wFormatTag = WAVE_FORMAT_PCM;
-    format->nChannels = 1;
-    format->nSamplesPerSec = SAMPLING_RATE;
-    format->wBitsPerSample = 16;
-    format->cbSize = 0;
-    userdata->frequency = 400;
-    userdata->wave_position = 0;
-    userdata->wave_step = 0;
-    userdata->amplitude = 0.0f;
-    userdata->type = OSCILLATOR_SINE;
-    userdata->max_amp = (32767 * userdata->amplitude);
-    userdata->wavdata = wavdata;
-    userdata->frequency = freq;
-    userdata->amplitude = amp;
-    userdata->max_amp = (32767 * userdata->amplitude);
-    userdata->base_pitch = 48;
-    userdata->amp_step = 0.01f;
+    /* format->wFormatTag = WAVE_FORMAT_PCM; */
+    /* format->nChannels = 1; */
+    /* format->nSamplesPerSec = SAMPLING_RATE; */
+    /* format->wBitsPerSample = 16; */
+    /* format->cbSize = 0; */
+    /* userdata->frequency = 400; */
+    /* userdata->wave_position = 0; */
+    /* userdata->wave_step = 0; */
+    /* userdata->amplitude = 0.0f; */
+    /* userdata->type = OSCILLATOR_SINE; */
+    /* userdata->max_amp = (32767 * userdata->amplitude); */
+    /* userdata->wavdata = wavdata; */
+    /* userdata->frequency = freq; */
+    /* userdata->amplitude = amp; */
+    /* userdata->max_amp = (32767 * userdata->amplitude); */
+    /* userdata->base_pitch = 48; */
+    /* userdata->amp_step = 0.01f; */
 
-    wav_init(wavdata, BasicOscillator_initStream, BasicOscillator_handleStream, format, userdata);
+    BasicOscillator_init(userdata);
+    /* wav_init(wavdata, BasicOscillator_initStream, BasicOscillator_handleStream, format, userdata); */
 
     if (strcmp(osc, "sine") == 0) {
         BasicOscillator_setType(userdata, OSCILLATOR_SINE);

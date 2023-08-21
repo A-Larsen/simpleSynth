@@ -20,7 +20,8 @@ typedef struct _BasicOscillator {
     float max_amp;
     float amp_step;
     float base_pitch;
-    WavData *wavdata;
+    WavData wavdata;
+    WAVEFORMATEX format;
     float *master_amp;
 } BasicOscillator;
 
@@ -121,6 +122,32 @@ void BasicOscillator_handleStream(int16_t *stream, WavData *wavdata)
         }
     }
     userdata->wave_position += userdata->wave_step;
+}
+
+void BasicOscillator_init(BasicOscillator *userdata)
+{
+    userdata->format.wFormatTag = WAVE_FORMAT_PCM;
+    userdata->format.nChannels = 1;
+    userdata->format.nSamplesPerSec = SAMPLING_RATE;
+    userdata->format.wBitsPerSample = 16;
+    userdata->format.cbSize = 0;
+    userdata->frequency = 400;
+    userdata->wave_position = 0;
+    userdata->wave_step = 0;
+    userdata->amplitude = 0.2f;
+    userdata->type = OSCILLATOR_SINE;
+    userdata->amp_step = 0.01f;
+    userdata->max_amp = (32767 * userdata->amplitude);
+    userdata->base_pitch = 48;
+
+    wav_init(&userdata->wavdata, BasicOscillator_initStream, 
+            BasicOscillator_handleStream, &userdata->format, userdata);
+
+}
+void BasicOscillator_play(BasicOscillator *userdata, bool play)
+{
+
+    userdata->wavdata.play = play;
 }
 
 

@@ -108,7 +108,7 @@ void CALLBACK WaveOutProc(HWAVEOUT wave_out_handle, UINT message,
             break;
         }
 		case WOM_DONE:{ 
-            while(AUDIO_START == false) printf("waiting...\n");
+            while(AUDIO_START == false) ;
 			for(int i = 0; i < CHUNK_SIZE; ++i) {
                 wavdata->handleStream(&wavdata->chunks[wavdata->chunk_swap][i], wavdata);
 			}

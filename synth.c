@@ -158,6 +158,7 @@ int main(int argc, char **argv)
     printf("frequency to pitch: %u\n", frequencyToPitch(246.94));
     printf("pitch to frequency: %f\n", pitchToFrequency(59));
     wavdata.play = true;
+    uint16_t base_pitch = 60;
 	while(!quit) {
 		switch(_getche()) {
 			case 72: { // up
@@ -204,7 +205,7 @@ int main(int argc, char **argv)
                 setStep(&userdata);
                 break;
 			}
-            case 'j': 
+            case '-': 
             {
                 if (userdata.amplitude - amp_step <= 0 ) {
                     break;
@@ -213,13 +214,97 @@ int main(int argc, char **argv)
                 userdata.max_amp = (32767 * userdata.amplitude);
                 break;
             } 
-            case 'k': 
+            case '=': 
             {
                 if (userdata.amplitude + amp_step >= 1 ) {
                     break;
                 }
                 userdata.amplitude += amp_step;
                 userdata.max_amp = (32767 * userdata.amplitude);
+                break;
+            } 
+            case 'a': 
+            {
+                userdata.frequency = pitchToFrequency(base_pitch);
+                setStep(&userdata);
+                break;
+            } 
+            case 'w': 
+            {
+                userdata.frequency = pitchToFrequency(base_pitch + 1);
+                setStep(&userdata);
+                break;
+            } 
+            case 's': 
+            {
+                userdata.frequency = pitchToFrequency(base_pitch + 2);
+                setStep(&userdata);
+                break;
+            } 
+            case 'e': 
+            {
+                userdata.frequency = pitchToFrequency(base_pitch + 3);
+                setStep(&userdata);
+                break;
+            } 
+            case 'd': 
+            {
+                userdata.frequency = pitchToFrequency(base_pitch + 4);
+                setStep(&userdata);
+                break;
+            } 
+            case 'f': 
+            {
+                userdata.frequency = pitchToFrequency(base_pitch + 5);
+                setStep(&userdata);
+                break;
+            } 
+            case 't': 
+            {
+                userdata.frequency = pitchToFrequency(base_pitch + 6);
+                setStep(&userdata);
+                break;
+            } 
+            case 'g': 
+            {
+                userdata.frequency = pitchToFrequency(base_pitch + 7);
+                setStep(&userdata);
+                break;
+            } 
+            case 'y': 
+            {
+                userdata.frequency = pitchToFrequency(base_pitch + 8);
+                setStep(&userdata);
+                break;
+            } 
+            case 'h': 
+            {
+                userdata.frequency = pitchToFrequency(base_pitch + 9);
+                setStep(&userdata);
+                break;
+            } 
+            case 'u': 
+            {
+                userdata.frequency = pitchToFrequency(base_pitch + 10);
+                setStep(&userdata);
+                break;
+            } 
+            case 'j': 
+            {
+                userdata.frequency = pitchToFrequency(base_pitch + 11);
+                setStep(&userdata);
+                break;
+            } 
+            case 'k': 
+            {
+                userdata.frequency = pitchToFrequency(base_pitch + 12);
+                setStep(&userdata);
+                break;
+            } 
+            case 'o': 
+            {
+                userdata.frequency = pitchToFrequency(base_pitch + 13);
+                setStep(&userdata);
                 break;
             } 
 		}

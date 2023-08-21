@@ -86,8 +86,6 @@ int wav_init(WavData *wavdata, void (*initStream) (struct _WavData *wavdata),
     }
     wavdata->initStream(wavdata);
 
-    while(1);
-
 	return 0;
 }
 
@@ -101,6 +99,10 @@ void CALLBACK WaveOutProc(HWAVEOUT wave_out_handle, UINT message,
             break;
         }
         case WOM_OPEN:  {
+            // Give windows time to prepare audio
+            printf("Prepareing..\n");
+            Sleep(1500);
+            printf("ready\n");
             break;
         }
 		case WOM_DONE:{ 

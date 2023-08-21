@@ -21,9 +21,9 @@ typedef enum _Oscillator_type{
 }Oscillator_type;
 
 
-void initStream(WavData *wavdata)
+
+void setStep(UserData *userdata)
 {
-    UserData *userdata = (UserData *)wavdata->data;
     switch(userdata->type) {
         case OSCILLATOR_SINE: 
         {
@@ -37,6 +37,12 @@ void initStream(WavData *wavdata)
             break;
         }
     }
+
+}
+void initStream(WavData *wavdata)
+{
+    UserData *userdata = (UserData *)wavdata->data;
+    setStep(userdata);
 }
 
 void handleStream(int16_t *stream, WavData *wavdata)
@@ -92,7 +98,7 @@ void fillBuffs(UserData *userdata, int16_t stream[3][SAMPLING_RATE])
                 }
                 case OSCILLATOR_SAW:
                 {
-                    stream[i][j] = ((userdata->wave_position *  2) - 1) *userdata->max_amp;
+                    stream[i][j] = (userdata->wave_position )  *userdata->max_amp;
                     if (userdata->wave_position >= 1) userdata->wave_position = 0;
                     break;
                 }
@@ -115,26 +121,94 @@ int main(int argc, char **argv)
         .frequency = 400,
         .wave_position = 0,
         .wave_step = 0,
-        .amplitude = 0.2f
+        .amplitude = 0.2f,
+        .type = OSCILLATOR_SINE
     };
 
-    if (argc == 4) {
-        char type[8];
-        sscanf_s(argv[1], "%s", type);
+    /* if (argc == 4) { */
+    /*     char type[8]; */
+    /*     sscanf_s(argv[1], "%s", type); */
 
-        if (strcmp(type, "sine") == 0) {
-            userdata.type = OSCILLATOR_SINE;
-        }
-        if (strcmp(type, "saw") == 0) {
-            userdata.type = OSCILLATOR_SAW;
-        }
-        if (strcmp(type, "square") == 0) {
-            userdata.type = OSCILLATOR_SQUARE;
-        }
+    /*     if (strcmp(type, "sine") == 0) { */
+    /*         userdata.type = OSCILLATOR_SINE; */
+    /*     } */
+    /*     if (strcmp(type, "saw") == 0) { */
+    /*         userdata.type = OSCILLATOR_SAW; */
+    /*     } */
+    /*     if (strcmp(type, "square") == 0) { */
+    /*         userdata.type = OSCILLATOR_SQUARE; */
+    /*     } */
 
-        sscanf_s(argv[2], "%f", &userdata.frequency);
-        sscanf_s(argv[3], "%f", &userdata.amplitude);
-    }
+    /*     sscanf_s(argv[2], "%f", &userdata.frequency); */
+    /*     sscanf_s(argv[3], "%f", &userdata.amplitude); */
+    /* } */
     userdata.max_amp = (32767 * userdata.amplitude);
     wav_init(&wavdata, initStream, handleStream, &userdata);
+    static bool quit = false;
+    float amp_step = 0.01f;
+    float freq_step = 10.0f;
+	while(!quit) {
+		switch(_getche()) {
+			case 72: { // up
+                 if (!(userdata.frequency + freq_step < (float)SAMPLING_RATE / 2.0f)) {
+                     break;
+                 }
+                userdata.frequency += freq_step;
+                setStep(&userdata);
+				printf("Frequency: %f\n", userdata.frequency);
+                break;
+			};
+			case 80: { // down
+                 if (!(userdata.frequency - freq_step > 0)) {
+                     break;
+                 }
+				userdata.frequency -= freq_step;
+                setStep(&userdata);
+				printf("Frequency: %f\n", userdata.frequency);
+                break;
+			}
+			case 27: { // esc
+				quit = true;
+                break;
+			} 
+			case '1': {
+                /* userdata.wave_step = TWOPI / ((float)SAMPLING_RATE / userdata.frequency); */
+                userdata.type = OSCILLATOR_SINE;
+                setStep(&userdata);
+                break;
+			}
+			case '2': {
+                /* userdata.wave_step = 1 / ((float)SAMPLING_RATE / userdata.frequency); */
+                userdata.type = OSCILLATOR_SAW;
+                setStep(&userdata);
+                break;
+			}
+			case '3': {
+                /* userdata.wave_step = 1 / ((float)SAMPLING_RATE / userdata.frequency); */
+                userdata.type = OSCILLATOR_SQUARE;
+                setStep(&userdata);
+                break;
+			}
+            case 'j': 
+            {
+                if (userdata.amplitude - amp_step <= 0 ) {
+                    break;
+                }
+                userdata.amplitude -= amp_step;
+                userdata.max_amp = (32767 * userdata.amplitude);
+                break;
+            } 
+            case 'k': 
+            {
+                if (userdata.amplitude + amp_step >= 1 ) {
+                    break;
+                }
+                userdata.amplitude += amp_step;
+                userdata.max_amp = (32767 * userdata.amplitude);
+                break;
+            } 
+		}
+	}
+
+	return 0;
 }

@@ -6,6 +6,8 @@ device instead than that seems to help
 == TODO
 * [ ] get callback to read a file stream from a wave file
 * [ ] create an array of frequency to pitch conversions
+* [ ] get midi to work
+* [ ] play back wav files
 
 == Links
 - http://croakingkero.com/tutorials/sound_winmm/[Nick Walton website winMM]

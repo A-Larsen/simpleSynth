@@ -1,61 +1,15 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <math.h>
-
 #include "audio.h"
-#include "readWav.h"
+#include "playWav.h"
 
-typedef struct _UserData {
-    float max_amp;
-    int16_t *data;
-    uint32_t data_len;
-    uint32_t pos;
-    WAVEFORMATEX *format;
-} UserData;
-
-bool quit = false;
+Mixer mixer;
 bool AUDIO_START = true;
-
-void initStream(WavData *wavdata)
-{
-    UserData *userdata = (UserData *)wavdata->data;
-}
-
-void handleStream(int16_t *stream, WavData *wavdata)
-{
-    UserData *userdata = (UserData *)wavdata->data;
-    if(userdata->pos > userdata->data_len) {
-        quit = true;
-        return;
-    }
-    *stream = userdata->data[userdata->pos];
-    userdata->pos += 1;
-}
-
 
 int main(int argc, char **argv)
 {
-    WavHeader wavheader;
-    WavData wavdata;
-    WAVEFORMATEX format;
-    UserData userdata;
-    userdata.data = NULL;
-
-    readWav("seaShells.wav", &wavheader, &userdata.data, &userdata.data_len, NULL);
-
-    format.wFormatTag = wavheader.wFormatTag;
-    format.nChannels = wavheader.nChannels;
-    format.nSamplesPerSec = wavheader.nSamplesPerSec;
-    format.wBitsPerSample = wavheader.wBitsPerSample;
-    format.cbSize = wavheader.cbSize;
-    userdata.format = &format;
-    userdata.pos = 0;
-
-    printf("sampleRate: %lu\n", format.nSamplesPerSec);
-    userdata.max_amp = pow(2, format.wBitsPerSample - 1) - 1;
-    wav_init(&wavdata, initStream, handleStream, &format, &userdata);
-    wavdata.play = true;
-    while(!quit);
-    freeWavData(userdata.data);
+    mixer.master_amp = 0.8f;
+    WavPlayer wavplayer;
+    WavPlayer_init(&wavplayer, "seaShells.wav", NULL);
+    WavPlayer_play(&wavplayer, true);
+    while(1);
 	return 0;
 }

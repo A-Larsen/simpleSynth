@@ -8,6 +8,7 @@
 #define M_PI ((double)3.14159265359)
 #define TWOPI (M_PI + M_PI)
 
+/* bool AUDIO_START = false; */
 
 typedef struct _BasicOscillators {
     float frequency;
@@ -159,10 +160,16 @@ __declspec(dllexport) int playOScillator(lua_State *L)
     userdata->max_amp = (32767 * userdata->amplitude);
     return 0;
 }
+__declspec(dllexport) int play(lua_State *L)
+{
+    AUDIO_START = true;
+    return 0;
+}
 
 __declspec(dllexport) luaL_Reg audio[] = {
     {"playOscillator", playOScillator},
     {"loadWav", loadWav},
+    {"play", play},
     {NULL, NULL}
 };
 

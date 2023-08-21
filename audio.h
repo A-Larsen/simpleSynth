@@ -29,7 +29,7 @@ typedef struct _WavData {
     void (*handleStream) (int16_t *stream, struct _WavData *wavdata);
     void *data;
 } WavData;
-
+bool AUDIO_START = false;
 
 void CALLBACK WaveOutProc(HWAVEOUT, UINT, DWORD_PTR, DWORD_PTR, DWORD_PTR);
 
@@ -101,12 +101,13 @@ void CALLBACK WaveOutProc(HWAVEOUT wave_out_handle, UINT message,
         }
         case WOM_OPEN:  {
             // Give windows time to prepare audio
-            printf("Prepareing..\n");
-            Sleep(1500);
-            printf("ready\n");
+            /* printf("Prepareing..\n"); */
+            /* Sleep(1500); */
+            /* printf("ready\n"); */
             break;
         }
 		case WOM_DONE:{ 
+            while(AUDIO_START == false) printf("waiting...\n");
 			for(int i = 0; i < CHUNK_SIZE; ++i) {
                 wavdata->handleStream(&wavdata->chunks[wavdata->chunk_swap][i], wavdata);
 			}

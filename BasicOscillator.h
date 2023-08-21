@@ -21,6 +21,7 @@ typedef struct _BasicOscillator {
     float amp_step;
     float base_pitch;
     WavData *wavdata;
+    float *master_amp;
 } BasicOscillator;
 
 typedef enum _Oscillator_type{
@@ -99,6 +100,7 @@ void BasicOscillator_handleStream(int16_t *stream, WavData *wavdata)
 {
     BasicOscillator *userdata = (BasicOscillator *)wavdata->data;
     switch(userdata->type) {
+        // multiple these by master amp in the future
         case OSCILLATOR_SINE:
         {
             *stream = sin(userdata->wave_position) * userdata->max_amp;

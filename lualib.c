@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 #include "BasicOscillator.h"
+#include "playWav.h"
 #include "audio.h"
 #include "readWav.h"
 
@@ -12,36 +13,8 @@
 bool AUDIO_START = false;
 float master_amp = 0.8f;
 
-
-typedef struct _WavPlayer {
-    float max_amp;
-    int16_t *data;
-    uint32_t data_len;
-    uint32_t pos;
-    WAVEFORMATEX *format;
-    WavData *wavdata;
-} WavPlayer;
-
-
 uint8_t OSCILLATOR_ID = 1;
 uint8_t WAVEFILE_ID = 1;
-
-
-__declspec(dllexport) void initWavPlayerStream(WavData *wavdata)
-{
-
-}
-__declspec(dllexport) void handleWavPlayerStream(int16_t *stream, WavData *wavdata)
-{
-    WavPlayer *userdata = (WavPlayer *)wavdata->data;
-    if(userdata->pos > userdata->data_len) {
-        return;
-    }
-    *stream = userdata->data[userdata->pos] * master_amp;
-    userdata->pos += 1;
-
-}
-
 
 __declspec(dllexport) int loadWav(lua_State *L)
 {
@@ -70,7 +43,7 @@ __declspec(dllexport) int loadWav(lua_State *L)
     userdata->pos = 0;
 
     userdata->max_amp = pow(2, format->wBitsPerSample - 1) - 1;
-    wav_init(wavdata, initWavPlayerStream, handleWavPlayerStream, format, userdata);
+    wav_init(wavdata, WavPlayer_initStream, WavPlayer_handleStream, format, userdata);
     userdata->wavdata = wavdata;
     lua_pushnumber(L, (lua_Number)WAVEFILE_ID);
     WAVEFILE_ID++;

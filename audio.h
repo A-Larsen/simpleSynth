@@ -13,7 +13,7 @@
 
 #pragma comment(lib, "winmm.lib")
 #define SAMPLING_RATE 44100
-#define CHUNK_SIZE 2000
+#define CHUNK_SIZE 2500
 #define CHUNK_COUNT 2
 
 typedef struct _WavData {

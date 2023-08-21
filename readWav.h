@@ -36,7 +36,7 @@ bool isData(char *p)
     return true;
 }
 
-void readWav(const char *file, WavHeader *header, int16_t *data, uint32_t *len)
+void readWav(const char *file, WavHeader *header, int16_t **data, uint32_t *len)
 {
     FILE *fp = NULL;
 
@@ -80,8 +80,8 @@ void readWav(const char *file, WavHeader *header, int16_t *data, uint32_t *len)
 
     }
     // make sure to free this!
-    data = (int16_t * )malloc(sizeof(int16_t) * (*len));
-
+    *data = (int16_t * )malloc(sizeof(int16_t) * (*len));
+    int read = fread(*data, *len, 1, fp);
     fclose(fp);
 }
 

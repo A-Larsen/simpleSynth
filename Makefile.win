@@ -10,3 +10,6 @@ lualib: lualib.c
 
 lua: lualib.c
 	luac5.4.2.exe tst.lua
+
+mediaPlayer: mediaPlayer.c
+	cl.exe mediaPlayer.c

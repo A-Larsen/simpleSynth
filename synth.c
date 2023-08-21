@@ -155,6 +155,7 @@ int main(int argc, char **argv)
     float amp_step = 0.01f;
     float freq_step = 10;
     float pitch_step = 1.0f;
+
     wavdata.play = true;
 	while(!quit) {
 		switch(_getche()) {

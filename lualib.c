@@ -8,7 +8,7 @@
 #define M_PI ((double)3.14159265359)
 #define TWOPI (M_PI + M_PI)
 
-/* bool AUDIO_START = false; */
+bool AUDIO_START = false;
 
 typedef struct _BasicOscillators {
     float frequency;

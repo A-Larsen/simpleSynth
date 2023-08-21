@@ -29,7 +29,8 @@ typedef struct _WavData {
     void (*handleStream) (int16_t *stream, struct _WavData *wavdata);
     void *data;
 } WavData;
-bool AUDIO_START = false;
+
+extern bool AUDIO_START;
 
 void CALLBACK WaveOutProc(HWAVEOUT, UINT, DWORD_PTR, DWORD_PTR, DWORD_PTR);
 

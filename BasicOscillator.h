@@ -1,9 +1,10 @@
 #ifndef _BASIC_OSCILLATOR_H_
 #define _BASIC_OSCILLATOR_H_
+#include <stdint.h>
 
 #include "audio.h"
 #include "audio-tools.h"
-#include <stdint.h>
+#include "mixer.h"
 
 #define M_PI ((double)3.14159265359)
 #define TWOPI (M_PI + M_PI)
@@ -22,7 +23,7 @@ typedef struct _BasicOscillator {
     float base_pitch;
     WavData wavdata;
     WAVEFORMATEX format;
-    float *master_amp;
+    Mixer *mixer;
 } BasicOscillator;
 
 typedef enum _Oscillator_type{
@@ -104,19 +105,19 @@ void BasicOscillator_handleStream(int16_t *stream, WavData *wavdata)
         // multiple these by master amp in the future
         case OSCILLATOR_SINE:
         {
-            *stream = sin(userdata->wave_position) * userdata->max_amp;
+            *stream = sin(userdata->wave_position) * userdata->max_amp * userdata->mixer->master_amp;
             if (userdata->wave_position >= TWOPI) userdata->wave_position = 0;
             break;
         }
         case OSCILLATOR_SAW:
         {
-            *stream = (userdata->wave_position) *userdata->max_amp;
+            *stream = (userdata->wave_position) *userdata->max_amp * userdata->mixer->master_amp;
             if (userdata->wave_position >= 1) userdata->wave_position = 0;
             break;
         }
         case OSCILLATOR_SQUARE:
         {
-            *stream = round(userdata->wave_position) *  userdata->max_amp;
+            *stream = round(userdata->wave_position) *  userdata->max_amp * userdata->mixer->master_amp;
             if (userdata->wave_position >= 1) userdata->wave_position = 0;
             break;
         }
@@ -124,7 +125,7 @@ void BasicOscillator_handleStream(int16_t *stream, WavData *wavdata)
     userdata->wave_position += userdata->wave_step;
 }
 
-void BasicOscillator_init(BasicOscillator *userdata)
+void BasicOscillator_init(BasicOscillator *userdata, Mixer *mixer)
 {
     userdata->format.wFormatTag = WAVE_FORMAT_PCM;
     userdata->format.nChannels = 1;
@@ -139,6 +140,7 @@ void BasicOscillator_init(BasicOscillator *userdata)
     userdata->amp_step = 0.01f;
     userdata->max_amp = (32767 * userdata->amplitude);
     userdata->base_pitch = 48;
+    userdata->mixer = mixer;
 
     wav_init(&userdata->wavdata, BasicOscillator_initStream, 
             BasicOscillator_handleStream, &userdata->format, userdata);

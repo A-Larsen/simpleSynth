@@ -6,12 +6,13 @@
 #include "playWav.h"
 #include "audio.h"
 #include "readWav.h"
+#include "mixer.h"
 
 #define M_PI ((double)3.14159265359)
 #define TWOPI (M_PI + M_PI)
 
 bool AUDIO_START = false;
-float master_amp = 0.8f;
+Mixer mixer;
 
 uint8_t OSCILLATOR_ID = 1;
 uint8_t WAVEFILE_ID = 1;
@@ -25,7 +26,7 @@ __declspec(dllexport) int loadWav(lua_State *L)
     sprintf(name, "%s_%d", "WAVE_FILE", WAVEFILE_ID);
     lua_setglobal(L, name);
 
-    WavPlayer_init(userdata, file_path, L);
+    WavPlayer_init(userdata, &mixer, file_path, L);
     lua_pushnumber(L, (lua_Number)WAVEFILE_ID);
     WAVEFILE_ID++;
     return 1;
@@ -65,7 +66,7 @@ __declspec(dllexport) int loadOsillator(lua_State *L)
     lua_setglobal(L, name);
 
 
-    BasicOscillator_init(userdata);
+    BasicOscillator_init(userdata, &mixer);
 
     if (strcmp(osc, "sine") == 0) {
         BasicOscillator_setType(userdata, OSCILLATOR_SINE);
@@ -83,7 +84,7 @@ __declspec(dllexport) int loadOsillator(lua_State *L)
 }
 __declspec(dllexport) int masterAmp(lua_State *L)
 {
-    master_amp = (float)luaL_checknumber(L, 1);
+    mixer.master_amp = (float)luaL_checknumber(L, 1);
     return 0;
 }
 
@@ -105,6 +106,7 @@ __declspec(dllexport) luaL_Reg audio[] = {
 
 __declspec(dllexport) int luaopen_audio_lualib(lua_State *L)
 {
+    mixer.master_amp = 0.8f;
     luaL_newlib(L, audio);
     return 1;
 }

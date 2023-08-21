@@ -3,6 +3,7 @@
 #include "BasicOscillator.h"
 
 bool AUDIO_START = true;
+Mixer mixer;
 
 int main(int argc, char **argv)
 {
@@ -10,7 +11,8 @@ int main(int argc, char **argv)
     static bool quit = false;
 
     BasicOscillator userdata;
-    BasicOscillator_init(&userdata);
+    mixer.master_amp = 0.8f;
+    BasicOscillator_init(&userdata, &mixer);
 
     BasicOscillator_setPitch(&userdata, 72);
     BasicOscillator_play(&userdata, true);

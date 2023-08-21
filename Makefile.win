@@ -1,2 +1,9 @@
 synth: synth.c
 	cl.exe synth.c
+
+lua: lualib.c
+	cl.exe /LD lualib.c /link "%LUA_DEV%\lua.lib"
+	MOVE /Y lualib.dll audio
+   	DEL lualib.exp 
+	DEL lualib.lib 
+	DEL lualib.obj 

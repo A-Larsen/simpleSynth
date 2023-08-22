@@ -2,7 +2,7 @@ local audio = require("audio")
 
 audio.masterAmp(.3)
 
-local osc_1 = audio.loadOsillator("square", 60, 0.5)
+local osc_1 = audio.loadOsillator("square", 40, 0.5)
 local wav_1 = audio.loadWav("seaShells.wav")
 
 audio.playWav(wav_1)

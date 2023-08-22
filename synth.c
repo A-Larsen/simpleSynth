@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <conio.h>
 
 #include "BasicOscillator.h"
 
@@ -18,7 +19,7 @@ int main(int argc, char **argv)
     BasicOscillator_play(&userdata, true);
 
 	while(!quit) {
-        char key = _getche();
+        char key = _getch();
 
         BasicOscillator_mapKey(&userdata, key);
 

@@ -1,3 +1,4 @@
+#define LUALIB
 #include <lua.h>
 #include <lauxlib.h>
 #include <stdint.h>

@@ -1,7 +1,9 @@
 #ifndef _PLAY_WAV_H_
 #define _PLAY_WAV_H_
 
+#ifdef LUALIB
 #include <lua.h>
+#endif
 
 #include "audio.h"
 #include "readWav.h"
@@ -34,12 +36,20 @@ void WavPlayer_handleStream(int16_t *stream, WavData *wavdata)
 }
 
 // lua state can be null
+#ifdef LUALIB
 void WavPlayer_init(WavPlayer *userdata, const char *file_path, lua_State *L)
+#else
+void WavPlayer_init(WavPlayer *userdata, const char *file_path)
+#endif
 {
     userdata->data = NULL;
 
     WavHeader wavheader;
+#ifdef LUALIB
     readWav(file_path, &wavheader, &userdata->data, &userdata->data_len, L);
+#else
+    readWav(file_path, &wavheader, &userdata->data, &userdata->data_len);
+#endif
 
     userdata->format.wFormatTag = wavheader.wFormatTag;
     userdata->format.nChannels = wavheader.nChannels;

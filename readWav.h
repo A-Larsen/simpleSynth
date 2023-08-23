@@ -7,7 +7,10 @@
 #include <string.h>
 #include <stdbool.h>
 #include <memory.h>
+
+#ifdef LUALIB
 #include <lua.h>
+#endif
 
 
 typedef struct _WavHeader {
@@ -41,8 +44,13 @@ bool isData(char *p)
     return true;
 }
 
+#ifdef LUALIB
 void readWav(const char *file, WavHeader *header, int16_t **data,
              uint32_t *len, lua_State *L)
+#else
+void readWav(const char *file, WavHeader *header, int16_t **data,
+             uint32_t *len)
+#endif
 {
     FILE *fp = NULL;
 
@@ -86,12 +94,14 @@ void readWav(const char *file, WavHeader *header, int16_t **data,
 
     }
     // make sure to free this!
-    if (L == NULL) {
-        *data = (int16_t * )malloc(sizeof(int16_t) * (*len));
-    } else {
-        /* *data = (int16_t * )malloc(sizeof(int16_t) * (*len)); */
+#ifdef LUALIB
         *data = (int16_t * )lua_newuserdata(L, sizeof(int16_t) * (*len));
-    } 
+#else
+        *data = (int16_t * )malloc(sizeof(int16_t) * (*len));
+#endif
+
+        /* *data = (int16_t * )malloc(sizeof(int16_t) * (*len)); */
+
     int read = fread(*data, *len, 1, fp);
     fclose(fp);
 }

@@ -5,11 +5,20 @@ using voicemeeter seems to cause issues. If you play sound directy through the
 device instead than that seems to help
 
 == TODO
-* [x] get callback to read a file stream from a wave file
+* [X] get callback to read a file stream from a wave file
+
 * [ ] get midi to work
+
 * [x] play back wav files
+
 * [ ] Make a volume envelope controler
+
 * [ ] Create a Master clock set by bpm. Make this clock run in a tcp socket
+
+* [ ] Make sure you can create a winMM callback in lua
+
+* [ ] Make sure you only open the device once and use the same device for all
+      wav data
 
 
 == Links

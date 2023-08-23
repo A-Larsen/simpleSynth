@@ -93,14 +93,12 @@ void readWav(const char *file, WavHeader *header, int16_t **data,
         }
 
     }
-    // make sure to free this!
+
 #ifdef LUALIB
         *data = (int16_t * )lua_newuserdata(L, sizeof(int16_t) * (*len));
 #else
         *data = (int16_t * )malloc(sizeof(int16_t) * (*len));
 #endif
-
-        /* *data = (int16_t * )malloc(sizeof(int16_t) * (*len)); */
 
     int read = fread(*data, *len, 1, fp);
     fclose(fp);

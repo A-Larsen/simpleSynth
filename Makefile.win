@@ -1,8 +1,14 @@
-synth: synth.c
-	cl.exe synth.c
+CFILES = error.c audio-tools.c audio.c readwav.c playwav.c BasicOscillator.c
+OFILES = error.obj audio-tools.obj audio.obj readwav.obj playwav.obj BasicOscillator.obj
 
-lualib: lualib.c
-	cl.exe /LD lualib.c /link "%LUA_DEV%\lua.lib"
+obj: $(CFILES) 
+	cl.exe /c $(CFILES)
+
+build_synth: synth.c $(OFILES)
+	cl.exe synth.c /link $(OFILES)
+
+build_lualib: lualib.c $(OFILES)
+	cl.exe /LD lualib.c /link $(OFILES) "%LUA_DEV%\lua.lib"
 	MOVE /Y lualib.dll audio
    	DEL lualib.exp 
 	DEL lualib.lib 
@@ -11,5 +17,19 @@ lualib: lualib.c
 lua: lualib.c
 	luac5.4.2.exe tst.lua
 
-mediaPlayer: mediaPlayer.c
-	cl.exe mediaPlayer.c /link "%LUA_DEV%\lua.lib
+build_mediaPlayer: mediaPlayer.c $(OFILES)
+	cl.exe mediaPlayer.c /link $(OFILES)
+
+clib: clib.c
+	LIB  $(OFILES)
+
+synth: obj build_synth
+
+mediaPlayer: obj build_mediaPlayer
+
+lualib: obj  build_lualib
+
+clean:
+	DEL /Q *.exe *.obj *.exp *.lib ut *.out .\audio\*.dll
+
+.PHONY: clean

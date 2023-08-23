@@ -1,3 +1,7 @@
 *.exe
 *.obj
 *.out
+*.exp
+*.lib
+**/*.dll
+*.dll

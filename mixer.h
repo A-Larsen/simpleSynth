@@ -5,5 +5,4 @@ typedef struct _Mixer {
     float master_amp;
 } Mixer;
 
-
 #endif // _MIXER_H_

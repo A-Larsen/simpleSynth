@@ -9,7 +9,7 @@
 #include <memory.h>
 
 #ifdef LUALIB
-#include <lua.h>
+#include <lua/lua.h>
 #endif
 
 typedef struct _WavHeader {

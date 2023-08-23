@@ -2,7 +2,7 @@
 #define _PLAY_WAV_H_
 
 #ifdef LUALIB
-#include <lua.h>
+#include <lua/lua.h>
 #endif
 
 #include "audio.h"

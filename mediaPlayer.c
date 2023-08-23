@@ -8,7 +8,7 @@ int main(int argc, char **argv)
 {
     mixer.master_amp = 0.8f;
     WavPlayer wavplayer;
-    WavPlayer_init(&wavplayer, "seaShells.wav", NULL);
+    WavPlayer_init(&wavplayer, "seaShells.wav");
     WavPlayer_play(&wavplayer, true);
     while(1);
 	return 0;

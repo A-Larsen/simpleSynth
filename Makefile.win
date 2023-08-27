@@ -1,4 +1,4 @@
-CFILES = error.c audio-tools.c audio.c readwav.c playwav.c BasicOscillator.c
+CFILES = error.c audio-tools.c audio.c readwav.c playwav.c BasicOscillator.c Oscilloscope.c
 OFILES = error.obj audio-tools.obj audio.obj readwav.obj playwav.obj BasicOscillator.obj
 
 obj: $(CFILES) 
@@ -15,7 +15,7 @@ build_lualib: lualib.c $(OFILES)
 	DEL lualib.obj 
 
 lua: lualib.c
-	luac5.4.2.exe tst.lua
+	luac.exe tst.lua
 
 build_mediaPlayer: mediaPlayer.c $(OFILES)
 	cl.exe mediaPlayer.c /link $(OFILES)

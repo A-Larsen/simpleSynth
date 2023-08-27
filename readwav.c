@@ -1,4 +1,5 @@
 #include "readwav.h"
+#include "error.h"
 
 static bool isFmt(char *p)
 {
@@ -30,7 +31,7 @@ void readWav(const char *file, WavHeader *header, int16_t **data,
 
     // this will not work correctly if writing mode is not if binary mode "wb"
     if (fopen_s(&fp, file, "rb") != 0) {
-        fprintf(stderr, "could not open WAV file");
+        PERROR("could not open WAV file");
         exit(1);
     }
 

@@ -11,5 +11,6 @@ int main(int argc, char **argv)
     WavPlayer_init(&wavplayer, "seaShells.wav");
     WavPlayer_play(&wavplayer, true);
     while(1);
+    wavPlayer_quit(&wavplayer);
 	return 0;
 }

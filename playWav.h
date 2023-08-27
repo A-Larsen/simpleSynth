@@ -27,5 +27,6 @@ __declspec(dllexport) void WavPlayer_init(WavPlayer *userdata, const char *file_
 #endif
 
 __declspec(dllexport) void WavPlayer_play(WavPlayer *userdata, bool play);
+__declspec(dllexport) void wavPlayer_quit(WavPlayer *userdata);
 
 #endif // _PLAY_WAV_H_

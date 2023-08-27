@@ -49,3 +49,8 @@ void WavPlayer_play(WavPlayer *userdata, bool play)
     userdata->wavdata.play = play;
 }
 
+void wavPlayer_quit(WavPlayer *userdata)
+{
+    freeWavData(userdata->wavdata.data);
+}
+

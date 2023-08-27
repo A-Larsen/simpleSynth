@@ -56,17 +56,21 @@ bool Oscilloscope_update(Oscilloscope *userdata)
     uint16_t y = ((((float)(*userdata->data + 32767) / 
                     (float)0xFFFF) - 1) * -1) * userdata->window_rect.h;
     static uint16_t x = 0;
+    static uint16_t prev_x = 0;
+    static uint16_t prev_y = 0;
     if (x == 0) clear(userdata, 0x00FF0000);
 
 
+    int width = 10;
     SDL_Rect rect = {
         .x = x,
         .y = y,
-        .w = 10,
-        .h = 10
+        .w = width,
+        .h = width
     };
     setColor(userdata, 0x00000000);
-    SDL_RenderDrawRect(userdata->renderer, &rect);
+    SDL_RenderFillRect(userdata->renderer, &rect);
+    SDL_RenderDrawLine(userdata->renderer, prev_x, prev_y + width / 2, x, y + width/ 2);
 
     // The xscale is how much time are we going to show on the screen
     int xscale = 0;
@@ -105,8 +109,11 @@ bool Oscilloscope_update(Oscilloscope *userdata)
     }
 
     SDL_RenderPresent(userdata->renderer);
+    prev_x = x;
+    prev_y = y;
     x += userdata->speed;
     if (x >= userdata->window_rect.w) {
+        prev_x = 0;
         x = 0;
     }
     return false;

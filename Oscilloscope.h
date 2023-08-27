@@ -3,6 +3,7 @@
 #include "audio.h"
 #include "mixer.h"
 #include <SDL2/SDL.h>
+#include <stdint.h>
 #define SDL_main main
 
 typedef struct _Oscilloscope {
@@ -14,7 +15,7 @@ typedef struct _Oscilloscope {
 } Oscilloscope;
 
 __declspec(dllexport) void Oscilloscope_init(Oscilloscope *userdata, SDL_Rect *rect);
-__declspec(dllexport) bool Oscilloscope_update(Oscilloscope *userdata);
+__declspec(dllexport) bool Oscilloscope_update(Oscilloscope *userdata, uint16_t speed);
 __declspec(dllexport) void Oscilloscope_quit(Oscilloscope *userdata);
 
 #endif // _OSCILLOSCOPE_H_

@@ -31,7 +31,7 @@ void Oscilloscope_init(Oscilloscope *userdata, SDL_Rect *rect) {
     clear(userdata, 0x00FF0000);
 }
 
-bool Oscilloscope_update(Oscilloscope *userdata)
+bool Oscilloscope_update(Oscilloscope *userdata, uint16_t speed)
 {
     // fill the background
 
@@ -74,7 +74,7 @@ bool Oscilloscope_update(Oscilloscope *userdata)
         }
     }
     SDL_UpdateWindowSurface(userdata->window);
-    x++;
+    x += speed;
     if (x >= userdata->window_rect.w) {
         x = 0;
     }

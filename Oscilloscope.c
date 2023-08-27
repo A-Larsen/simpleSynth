@@ -1,8 +1,17 @@
 #include "Oscilloscope.h"
 #include "error.h"
 #include <SDL2/SDL_keycode.h>
+#include <SDL2/SDL_render.h>
 #include <SDL2/SDL_video.h>
 #include <stdint.h>
+
+static void setColor(Oscilloscope *userdata, uint32_t color)
+{
+    SDL_SetRenderDrawColor(userdata->renderer,(color >> 16) & 0xFF, 
+                                    (color >> 8) & 0xFF, color & 0xFF, 
+                                    (color >> 24) & 0xFF);
+
+}
 
 static void clear(Oscilloscope *userdata, uint32_t color)
 {
@@ -14,8 +23,8 @@ static void clear(Oscilloscope *userdata, uint32_t color)
         .h = userdata->window_rect.h,
     };
 
-    SDL_FillRect(userdata->surface, &screen, color);
-    SDL_UpdateWindowSurface(userdata->window);
+    setColor(userdata, color);
+    SDL_RenderClear(userdata->renderer);
 }
 
 void Oscilloscope_init(Oscilloscope *userdata, SDL_Rect *rect) {
@@ -29,7 +38,8 @@ void Oscilloscope_init(Oscilloscope *userdata, SDL_Rect *rect) {
                                         rect->y,
                                         rect->w, 
                                         rect->h, 0);
-    clear(userdata, 0x00FF0000);
+    userdata->renderer = SDL_CreateRenderer(userdata->window, -1, 
+                                            SDL_RENDERER_SOFTWARE);
     userdata->speed = 1;
 }
 
@@ -43,7 +53,8 @@ bool Oscilloscope_update(Oscilloscope *userdata)
     // fill the background
 
     // scale the int16 data to the screen width and height
-    uint16_t y = ((((float)(*userdata->data + 32767) / (float)0xFFFF) - 1) * -1) * userdata->window_rect.h;
+    uint16_t y = ((((float)(*userdata->data + 32767) / 
+                    (float)0xFFFF) - 1) * -1) * userdata->window_rect.h;
     static uint16_t x = 0;
     if (x == 0) clear(userdata, 0x00FF0000);
 
@@ -54,8 +65,8 @@ bool Oscilloscope_update(Oscilloscope *userdata)
         .w = 10,
         .h = 10
     };
-    SDL_FillRect(userdata->surface, &rect, 0x00000000);
-    /* printf("%u\n", yscale); */
+    setColor(userdata, 0x00000000);
+    SDL_RenderDrawRect(userdata->renderer, &rect);
 
     // The xscale is how much time are we going to show on the screen
     int xscale = 0;
@@ -92,7 +103,8 @@ bool Oscilloscope_update(Oscilloscope *userdata)
             }
         }
     }
-    SDL_UpdateWindowSurface(userdata->window);
+
+    SDL_RenderPresent(userdata->renderer);
     x += userdata->speed;
     if (x >= userdata->window_rect.w) {
         x = 0;
@@ -102,5 +114,6 @@ bool Oscilloscope_update(Oscilloscope *userdata)
 
 void Oscilloscope_quit(Oscilloscope *userdata)
 {
+    SDL_DestroyRenderer(userdata->renderer);
     SDL_Quit();
 }

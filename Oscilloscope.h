@@ -13,6 +13,7 @@ typedef struct _Oscilloscope {
     SDL_Rect window_rect;
     int16_t *data;
     uint16_t speed;
+    SDL_Renderer *renderer;
 } Oscilloscope;
 
 __declspec(dllexport) void Oscilloscope_init(Oscilloscope *userdata, SDL_Rect *rect);

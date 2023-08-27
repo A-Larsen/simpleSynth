@@ -1,5 +1,5 @@
 CFILES = error.c audio-tools.c audio.c readwav.c playwav.c BasicOscillator.c Oscilloscope.c
-OFILES = error.obj audio-tools.obj audio.obj readwav.obj playwav.obj BasicOscillator.obj
+OFILES = error.obj audio-tools.obj audio.obj readwav.obj playwav.obj BasicOscillator.obj Oscilloscope.obj
 
 obj: $(CFILES) 
 	cl.exe /c $(CFILES)
@@ -8,7 +8,7 @@ build_synth: synth.c $(OFILES)
 	cl.exe synth.c /link $(OFILES)
 
 build_lualib: lualib.c $(OFILES)
-	cl.exe /LD lualib.c /link $(OFILES) "%LUA_DEV%\lua.lib"
+	cl.exe /LD lualib.c /link $(OFILES) "C:\libs\lua.lib" "C:\libs\SDL2.lib"
 	MOVE /Y lualib.dll audio
    	DEL lualib.exp 
 	DEL lualib.lib 
@@ -20,12 +20,16 @@ lua: lualib.c
 build_mediaPlayer: mediaPlayer.c $(OFILES)
 	cl.exe mediaPlayer.c /link $(OFILES)
 
+build_test_osc: test_osc.c
+	cl.exe test_osc.c /link $(OFILES) "C:\libs\SDL2.lib"
+
 clib: clib.c
 	LIB  $(OFILES)
 
 synth: obj build_synth
 
 mediaPlayer: obj build_mediaPlayer
+test_osc: obj build_test_osc
 
 lualib: obj  build_lualib
 

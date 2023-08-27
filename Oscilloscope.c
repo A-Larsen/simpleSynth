@@ -16,7 +16,7 @@ void Oscilloscope_init(Oscilloscope *userdata, SDL_Rect *rect) {
     userdata->surface = SDL_GetWindowSurface(userdata->window);
 }
 
-void Oscilloscope_update(Oscilloscope *userdata)
+bool Oscilloscope_update(Oscilloscope *userdata)
 {
     SDL_Rect screen = {
         .x = 0,
@@ -25,6 +25,33 @@ void Oscilloscope_update(Oscilloscope *userdata)
         .h = userdata->window_rect.h,
     };
 
-    SDL_FillRect(userdata->surface, &screen, 0x000000);
+    SDL_FillRect(userdata->surface, &screen, 0x00FF0000);
     SDL_UpdateWindowSurface(userdata->window);
+    while(SDL_PollEvent(&userdata->event)) {
+        switch(userdata->event.type) {
+            case SDL_QUIT: 
+            {
+                
+                break;
+            }
+            case SDL_KEYDOWN: 
+            {
+                switch(userdata->event.key.keysym.sym) {
+                    case SDLK_q: 
+                    {
+                        return 1;
+                        break;
+                    }
+                }
+                printf("nice\n");
+                break;
+            }
+        }
+    }
+    return false;
+}
+
+void Oscilloscope_quit(Oscilloscope *userdata)
+{
+    SDL_Quit();
 }

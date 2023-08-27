@@ -32,8 +32,7 @@ int main(void)
     while(1) {
         if (data_pos > 0xFFFF) data_pos = 0;
         scope.data = &data[data_pos];
-        if (Oscilloscope_update(&scope, 1)) break;
-        SDL_Delay(10);
+        if (Oscilloscope_update(&scope)) break;
         data_pos += 60;;
     }
 

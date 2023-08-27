@@ -1,6 +1,8 @@
 #include "Oscilloscope.h"
 #include "error.h"
+#include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_video.h>
+#include <stdint.h>
 
 static void clear(Oscilloscope *userdata, uint32_t color)
 {
@@ -14,7 +16,6 @@ static void clear(Oscilloscope *userdata, uint32_t color)
 
     SDL_FillRect(userdata->surface, &screen, color);
     SDL_UpdateWindowSurface(userdata->window);
-
 }
 
 void Oscilloscope_init(Oscilloscope *userdata, SDL_Rect *rect) {
@@ -29,9 +30,15 @@ void Oscilloscope_init(Oscilloscope *userdata, SDL_Rect *rect) {
                                         rect->w, 
                                         rect->h, 0);
     clear(userdata, 0x00FF0000);
+    userdata->speed = 1;
 }
 
-bool Oscilloscope_update(Oscilloscope *userdata, uint16_t speed)
+void Oscilloscope_changeSpeed(Oscilloscope *userdata, uint16_t speed)
+{
+    userdata->speed = speed;
+}
+
+bool Oscilloscope_update(Oscilloscope *userdata)
 {
     // fill the background
 
@@ -67,6 +74,18 @@ bool Oscilloscope_update(Oscilloscope *userdata, uint16_t speed)
                         return 1;
                         break;
                     }
+                    case SDLK_EQUALS: 
+                    {
+                        userdata->speed++;
+                        printf("plus\n");
+                        break;
+                    }
+                    case SDLK_MINUS: 
+                    {
+                        userdata->speed--;
+                        printf("plus\n");
+                        break;
+                    }
                 }
                 /* printf("nice\n"); */
                 break;
@@ -74,7 +93,7 @@ bool Oscilloscope_update(Oscilloscope *userdata, uint16_t speed)
         }
     }
     SDL_UpdateWindowSurface(userdata->window);
-    x += speed;
+    x += userdata->speed;
     if (x >= userdata->window_rect.w) {
         x = 0;
     }

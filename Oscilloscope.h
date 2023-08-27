@@ -10,6 +10,7 @@ typedef struct _Oscilloscope {
     SDL_Event event;
     SDL_Surface *surface;
     SDL_Rect window_rect;
+    int16_t *data;
 } Oscilloscope;
 
 __declspec(dllexport) void Oscilloscope_init(Oscilloscope *userdata, SDL_Rect *rect);

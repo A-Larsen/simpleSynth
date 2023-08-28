@@ -20,6 +20,8 @@ device instead than that seems to help
 * [ ] Make sure you only open the device once and use the same device for all
       wav data
 
+* [ ] Learn windos threads and make `WaveOutOpen` callback a thread.
+
 
 == Links
 - http://croakingkero.com/tutorials/sound_winmm/[Nick Walton website winMM]

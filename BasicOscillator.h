@@ -26,6 +26,7 @@ typedef struct _BasicOscillator {
     float base_pitch;
     WavData wavdata;
     WAVEFORMATEX format;
+    int16_t *stream;
 } BasicOscillator;
 
 typedef enum _Oscillator_type{

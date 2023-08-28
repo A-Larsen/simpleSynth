@@ -83,6 +83,7 @@ void BasicOscillator_setFreq(BasicOscillator *userdata, float frequency)
 static void BasicOscillator_handleStream(int16_t *stream, WavData *wavdata)
 {
     BasicOscillator *userdata = (BasicOscillator *)wavdata->data;
+    /* userdata->stream = stream; */
     switch(userdata->type) {
         // multiple these by master amp in the future
         case OSCILLATOR_SINE:

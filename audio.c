@@ -1,32 +1,75 @@
 #include "audio.h"
+#include "error.h"
 
-void CALLBACK WaveOutProc(HWAVEOUT wave_out_handle, UINT message,
-                          DWORD_PTR instance, DWORD_PTR param1,
-                          DWORD_PTR param2) {
-    WavData *wavdata = (WavData *)instance;
+/* void CALLBACK WaveOutProc(HWAVEOUT wave_out_handle, UINT message, */
+/*                           DWORD_PTR instance, DWORD_PTR param1, */
+/*                           DWORD_PTR param2) { */
+/*     WavData *wavdata = (WavData *)instance; */
 
-	switch(message) {
-        case WOM_CLOSE: {
-            break;
+/* 	switch(message) { */
+/*         case WOM_CLOSE: { */
+/*             break; */
+/*         } */
+/*         case WOM_OPEN:  { */
+/*             break; */
+/*         } */
+/* 		case WOM_DONE:{ */ 
+/*             if(!wavdata->play || !AUDIO_START) break; */
+/* 			for(int i = 0; i < CHUNK_SIZE; ++i) { */
+/*                 wavdata->handleStream(&wavdata->chunks[wavdata->chunk_swap][i], wavdata); */
+/* 			} */
+/* 			if(waveOutWrite(wavdata->wave_out, &wavdata->header[wavdata->chunk_swap], sizeof(wavdata->header[wavdata->chunk_swap])) */
+/*                             != MMSYSERR_NOERROR) { */
+/* 				PERROR("waveOutWrite failed\n"); */
+/* 			} */
+/* 			wavdata->chunk_swap = !wavdata->chunk_swap; */
+/*             break; */
+/* 		} */
+/* 	} */
+/* } */
+
+DWORD WINAPI ThreadProcOne(LPVOID lpParameter)
+{
+    MSG msg;
+    WavData *wavdata = (WavData *)lpParameter;
+    while(1) {
+
+        BOOL ret = GetMessage(&msg, NULL, 0, 0);
+
+        if (ret < 0) {
+            PERROR("Could not get WaveOut messages:\n%s\n", GetLastError());
         }
-        case WOM_OPEN:  {
-            break;
+
+        switch(msg.message) {
+            case WOM_CLOSE: {
+                break;
+            }
+            case WOM_OPEN:  {
+                break;
+            }
+            case WOM_DONE:{ 
+                if(!wavdata->play || !AUDIO_START) break;
+                for(int i = 0; i < CHUNK_SIZE; ++i) {
+                    wavdata->handleStream(&wavdata->chunks[wavdata->chunk_swap][i], wavdata);
+                }
+                if(waveOutWrite(wavdata->wave_out, &wavdata->header[wavdata->chunk_swap],
+                                sizeof(wavdata->header[wavdata->chunk_swap])) 
+                        != MMSYSERR_NOERROR) {
+                    PERROR("waveOutWrite failed\n");
+                }
+                wavdata->chunk_swap = !wavdata->chunk_swap;
+                break;
+            }
         }
-		case WOM_DONE:{ 
-            if(!wavdata->play || !AUDIO_START) break;
-			for(int i = 0; i < CHUNK_SIZE; ++i) {
-                wavdata->handleStream(&wavdata->chunks[wavdata->chunk_swap][i], wavdata);
-			}
-			if(waveOutWrite(wavdata->wave_out, &wavdata->header[wavdata->chunk_swap], sizeof(wavdata->header[wavdata->chunk_swap]))
-                            != MMSYSERR_NOERROR) {
-				PERROR("waveOutWrite failed\n");
-			}
-			wavdata->chunk_swap = !wavdata->chunk_swap;
-            break;
-		}
-	}
+    }
+    return 0;
+
 }
 
+#define WAVE_THREAD_LIMIT 8
+HANDLE threads[WAVE_THREAD_LIMIT];
+DWORD thread_ids[WAVE_THREAD_LIMIT];
+uint8_t thread_count = 0;
 int wav_init(WavData *wavdata, void (*initStream) (struct _WavData *wavdata), 
             void (*handleStream) (int16_t *stream, struct _WavData *wavdata),
             WAVEFORMATEX *format, void *data) 
@@ -45,8 +88,18 @@ int wav_init(WavData *wavdata, void (*initStream) (struct _WavData *wavdata),
     // WAVE_MAPPER automatically selects the best device
     // would probably be a good idea to have the option to actuall selec the
     // device in the future
-    if(waveOutOpen(&wavdata->wave_out, WAVE_MAPPER, format, (DWORD_PTR)WaveOutProc,
-                (DWORD_PTR)wavdata, CALLBACK_FUNCTION) != MMSYSERR_NOERROR) {
+    int i = thread_count++;
+
+    threads[i]= CreateThread(
+        NULL,
+        0,
+        ThreadProcOne,
+        wavdata,
+        0,
+        &thread_ids[i]
+    );
+    if(waveOutOpen(&wavdata->wave_out, WAVE_MAPPER, format, thread_ids[i],
+                (DWORD_PTR)wavdata, CALLBACK_THREAD) != MMSYSERR_NOERROR) {
         PERROR("waveOutOpen failed\n");
         return -1;
     }

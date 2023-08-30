@@ -2,12 +2,17 @@
 #define _AUDIO_H_
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <winuser.h>
+#include <processthreadsapi.h>
 #include <mmsystem.h>
 #include <stdbool.h>
 #include <conio.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <math.h>
+
+#pragma comment(lib, "Kernel32.lib")
+#pragma comment(lib, "User32.lib")
 
 #include "error.h"
 
